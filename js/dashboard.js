@@ -23,6 +23,8 @@ import {
   logout
 } from './services/auth-service.js';
 
+import { DEMO_PROPERTIES } from './demo-data.js';
+
 
 // ============================================================
 // DEMO DATA
@@ -35,29 +37,9 @@ export const SAMPLE_DASHBOARD_STATS = {
 };
 
 
-export const SAMPLE_PROPERTIES = [
-  {
-    ulpin: 'ULP-892-441-A',
-    type: 'Agricultural',
-    location: 'Plot 42, North Sector, District A',
-    area: '2.4 Hectares',
-    status: 'Verified'
-  },
-  {
-    ulpin: 'ULP-110-398-B',
-    type: 'Residential',
-    location: 'Block C, Metro Layout, District B',
-    area: '1200 Sq. Ft.',
-    status: 'Verified'
-  },
-  {
-    ulpin: 'Pending ID...',
-    type: 'Commercial',
-    location: 'Plot 5, Market Road, District A',
-    area: '0.5 Hectares',
-    status: 'Under Review'
-  }
-];
+// Shared frontend demo source (js/demo-data.js) — also used by My Properties,
+// so both pages always show the SAME properties.
+export const SAMPLE_PROPERTIES = DEMO_PROPERTIES;
 
 
 export const SAMPLE_ACTIVITIES = [
@@ -172,6 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------------------------
 
   setupPropertyActions();
+
+
+  // ----------------------------------------------------------
+  // 8b. PROPERTY MAP
+  // ----------------------------------------------------------
+
+  initDashboardMap();
 
 
   // ----------------------------------------------------------
@@ -902,52 +891,10 @@ function handleDashboardAction(action) {
 
     case 'Open GIS Map':
 
-      showDemoModal(
-        'GIS Explorer',
-        `
-          <div class="text-center py-5">
-
-            <span
-              class="material-symbols-outlined text-6xl text-[#002F6C]">
-              map
-            </span>
-
-            <h4 class="text-xl font-bold mt-3">
-              Bharat Bhumi GIS Explorer
-            </h4>
-
-            <p class="text-gray-500 mt-2">
-              Explore land parcels and property boundaries
-              using the GIS system.
-            </p>
-
-
-            <div
-              class="mt-5 h-48 rounded-lg bg-gray-100 flex items-center justify-center">
-
-              <div class="text-center">
-
-                <span
-                  class="material-symbols-outlined text-4xl text-[#002F6C]">
-                  location_on
-                </span>
-
-                <p class="font-semibold mt-2">
-                  GIS Demo View
-                </p>
-
-                <p class="text-sm text-gray-500">
-                  Interactive map integration
-                  can be connected here.
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-        `
-      );
+      // Opens the full GIS Explorer page. The dashboard demo properties
+      // have no GIS parcel geometry, so no property context is passed.
+      window.location.href =
+        'gis-explorer.html';
 
       break;
 
@@ -1190,6 +1137,238 @@ function showPropertyDetails(property) {
       </div>
     `
   );
+}
+
+
+// ============================================================
+// PROPERTY MAP (Dashboard "View Properties on Map" card)
+// ============================================================
+
+// Demo coordinates for SAMPLE_PROPERTIES above (demo only — no geo API).
+// Spread around New Delhi so markers do not overlap.
+
+const DASHBOARD_MAP_POINTS = [
+  [28.5765, 77.1455],
+  [28.5885, 77.1615],
+  [28.5645, 77.1575]
+];
+
+
+let dashboardMap =
+  null;
+
+
+function initDashboardMap() {
+
+  const container =
+    document.getElementById('dashboard-map');
+
+  if (!container) {
+
+    return;
+  }
+
+
+  // Leaflet CDN unavailable — the static card background stays visible.
+  if (!window.L) {
+
+    console.warn(
+      '[Dashboard] Leaflet not loaded; keeping static map fallback.'
+    );
+
+    return;
+  }
+
+
+  try {
+
+    dashboardMap =
+      window.L.map('dashboard-map', {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        attributionControl: false
+      }).setView(
+        [28.5765, 77.1545],
+        13
+      );
+
+
+    window.L.tileLayer(
+      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      { maxZoom: 19 }
+    ).addTo(dashboardMap);
+
+
+    SAMPLE_PROPERTIES.forEach(
+      (property, index) => {
+
+        const coords =
+          DASHBOARD_MAP_POINTS[index];
+
+        if (!coords) {
+
+          return;
+        }
+
+
+        const verified =
+          property.status === 'Verified';
+
+
+        const marker =
+          window.L.marker(
+            coords,
+            {
+              icon: window.L.divIcon({
+                className: '',
+                html: `
+                  <span title="${property.ulpin}" style="display: block; width: 26px; height: 26px; border-radius: 9999px; background: #001b44; border: 3px solid #ffffff; box-shadow: 0 1px 4px rgba(0, 27, 68, 0.45); position: relative;">
+                    <span style="position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 9999px; background: ${verified ? '#16a34a' : '#EA580C'}; transform: translate(-50%, -50%);"></span>
+                  </span>
+                `,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+              })
+            }
+          ).addTo(dashboardMap);
+
+
+        const badgeStyle =
+          verified
+            ? 'background: rgba(22, 163, 74, 0.12); color: #15803d;'
+            : 'background: rgba(234, 88, 12, 0.12); color: #c2410c;';
+
+
+        marker.bindPopup(`
+          <div style="font-family: 'Hanken Grotesk', sans-serif; min-width: 190px;">
+            <div style="font-size: 12px; color: #5c5f61;">
+              ULPIN / Property ID
+            </div>
+            <div style="font-weight: 700; color: #001b44; font-size: 15px;">
+              ${property.ulpin}
+            </div>
+            <div style="font-size: 13px; margin-top: 4px;">
+              <strong>${property.type}</strong> &bull; ${property.area}
+            </div>
+            <div style="font-size: 13px; color: #434750;">
+              ${property.location}
+            </div>
+            <div style="margin-top: 6px;">
+              <span style="font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 9999px; ${badgeStyle}">
+                ${property.status}
+              </span>
+            </div>
+            <button
+              data-view-property="${index}"
+              style="margin-top: 10px; width: 100%; background: #002F6C; color: #ffffff; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+              View Details
+            </button>
+          </div>
+        `);
+      }
+    );
+
+
+    dashboardMap.on(
+      'popupopen',
+      (event) => {
+
+        const button =
+          event.popup
+            .getElement()
+            .querySelector('[data-view-property]');
+
+        if (!button) {
+
+          return;
+        }
+
+
+        button.addEventListener(
+          'click',
+          () => {
+
+            const property =
+              SAMPLE_PROPERTIES[
+                Number(
+                  button.getAttribute('data-view-property')
+                )
+              ];
+
+            dashboardMap.closePopup();
+
+            if (property) {
+
+              showPropertyDetails(property);
+            }
+          }
+        );
+      }
+    );
+
+
+    const zoomIn =
+      document.getElementById('dash-zoom-in');
+
+    if (zoomIn) {
+
+      zoomIn.addEventListener(
+        'click',
+        (event) => {
+
+          event.stopPropagation();
+
+          if (dashboardMap) {
+
+            dashboardMap.zoomIn();
+          }
+        }
+      );
+    }
+
+
+    const zoomOut =
+      document.getElementById('dash-zoom-out');
+
+    if (zoomOut) {
+
+      zoomOut.addEventListener(
+        'click',
+        (event) => {
+
+          event.stopPropagation();
+
+          if (dashboardMap) {
+
+            dashboardMap.zoomOut();
+          }
+        }
+      );
+    }
+
+
+    // Let the card layout settle before measuring the map.
+    setTimeout(
+      () => {
+
+        if (dashboardMap) {
+
+          dashboardMap.invalidateSize();
+        }
+      },
+      100
+    );
+
+  } catch (error) {
+
+    console.warn(
+      '[Dashboard] Map init failed, keeping static fallback:',
+      error
+    );
+
+    dashboardMap =
+      null;
+  }
 }
 
 

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Bhumi - Help & Support</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
+    body { min-height: 100vh; background: #faf9ff; color: #1a1b20; font-family: "Hanken Grotesk", sans-serif; overflow-x: hidden; overflow-y: auto; }
+    .page-container { width: 100%; max-width: none; margin: 0; }
+    .dashboard-main { margin-left: 256px; width: calc(100% - 256px); }
+    .status-verified { background: rgba(22,163,74,.10); color: #16A34A; }
+    .status-pending { background: rgba(234,88,12,.10); color: #EA580C; }
+    .status-rejected { background: rgba(186,26,26,.10); color: #BA1A1A; }
+    .status-neutral { background: rgba(92,95,97,.12); color: #434750; }
+    .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+    .modal-overlay { background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
+    .field-error { color: #BA1A1A; font-size: 13px; margin-top: 4px; }
+    html { scroll-behavior: smooth; }
+    @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
+    @media (max-width: 768px) {
+      .dashboard-main { margin-left: 0; width: 100%; }
+      .dashboard-content { padding: 16px; }
+    }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-outline-variant/40" style="box-shadow: 0px 2px 4px rgba(0,47,108,.05);">
+    <div class="h-full w-full flex items-center px-6 gap-6">
+      <a href="index.html" class="flex items-center gap-3 flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi Logo" class="w-9 h-9 rounded-full bg-white p-1 object-contain border border-outline-variant/30">
+        <span class="text-xl font-bold tracking-tight text-primary hidden md:block">Bharat Bhumi</span>
+      </a>
+      <div class="hidden md:flex items-center gap-2 ml-auto">
+        <a href="index.html" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">Explore</a>
+        <a href="services.html" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">Services</a>
+        <a href="help.html" class="px-3 py-2 rounded-md text-primary font-bold border-b-2 border-primary transition text-label-md font-label-md">Help</a>
+      </div>
+      <button id="btn-notifications" class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition text-on-surface-variant" title="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-400"></span>
+      </button>
+      <span class="hidden lg:block whitespace-nowrap text-secondary text-label-md font-label-md">Language: EN/HI</span>
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+          <span id="top-nav-username" class="font-semibold text-on-surface">Citizen</span>
+          <span id="top-nav-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary">USER</span>
+        </div>
+        <button id="btn-topnav-logout" class="flex items-center gap-2 px-4 py-2 rounded-md border border-outline-variant hover:bg-surface-container-high transition text-label-md font-label-md text-on-surface" title="Sign out">
+          <span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex min-h-screen pt-16 page-container">
+    <aside class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-outline-variant z-40 p-4">
+      <div class="px-2 mb-7">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-white border border-outline-variant flex items-center justify-center overflow-hidden flex-shrink-0">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi" class="w-full h-full object-contain p-1">
+          </div>
+          <div class="min-w-0">
+            <h2 id="sidebar-user-name" class="font-bold text-lg text-primary truncate">Citizen Portal</h2>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-[#16a34a]">check_circle</span>
+              <span id="sidebar-user-role" class="text-sm text-secondary truncate">USER • Verified Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a href="dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+        </a>
+        <a href="my-properties.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">domain</span><span>My Properties</span>
+        </a>
+        <a href="application-tracker.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">assignment</span><span>Applications</span>
+        </a>
+        <a href="gis-explorer.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">map</span><span>GIS Explorer</span>
+        </a>
+        <a href="documents.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">description</span><span>Documents</span>
+        </a>
+        <a href="payments.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">payments</span><span>Payments</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-outline-variant space-y-2">
+        <a href="new-application.html" class="w-full bg-primary text-white py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition">
+          <span class="material-symbols-outlined text-[18px]">add</span>New Application
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">settings</span><span>Settings</span>
+        </a>
+        <button id="btn-sidebar-logout" class="w-full flex items-center gap-3 text-on-surface-variant hover:bg-red-50 hover:text-red-600 rounded-lg px-4 py-3 transition text-left">
+          <span class="material-symbols-outlined">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main flex-1 overflow-y-auto">
+      <div class="dashboard-content">
+        <div class="w-full max-w-[1280px] mx-auto flex flex-col gap-8">
+          <div>
+            <div class="text-label-sm font-semibold text-on-surface-variant mb-2 flex items-center gap-2">
+              <span>Portal</span>
+              <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+              <span class="text-primary font-bold">Help &amp; Support</span>
+            </div>
+            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Help &amp; Support</h1>
+            <p class="text-body-md text-secondary mt-1">Find answers, understand land services, resolve common issues and get support.</p>
+            <div class="mt-4 relative max-w-2xl">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary" style="font-size:22px;">search</span>
+              <input type="text" id="help-search" placeholder="Search for help, services, applications or documents..."
+                class="w-full pl-12 pr-4 py-3 bg-white text-on-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-base shadow-sm transition-colors">
+            </div>
+            <div id="search-results" class="hidden mt-4 max-w-2xl"></div>
+          </div>
+
+          <section aria-label="Quick help">
+            <h2 class="text-xl font-bold text-on-surface mb-3">Quick Help</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <a href="#faq" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">quiz</span><span class="font-semibold text-sm">FAQs</span></a>
+              <a href="#service-help" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">medical_services</span><span class="font-semibold text-sm">Service Guide</span></a>
+              <a href="#guide-track" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">track_changes</span><span class="font-semibold text-sm">Application Guide</span></a>
+              <a href="#doc-help" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">description</span><span class="font-semibold text-sm">Document Guide</span></a>
+              <a href="#payment-help" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">payments</span><span class="font-semibold text-sm">Payment Help</span></a>
+              <a href="#gis-help" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">map</span><span class="font-semibold text-sm">GIS / Map Help</span></a>
+              <a href="#account-help" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">manage_accounts</span><span class="font-semibold text-sm">Account &amp; Login</span></a>
+              <a href="#grievance" class="bg-white rounded-xl border border-outline-variant/40 p-4 hover:shadow-md transition flex items-center gap-3"><span class="material-symbols-outlined text-primary">feedback</span><span class="font-semibold text-sm">Grievance</span></a>
+            </div>
+          </section>
+
+          <section id="faq" aria-label="Frequently asked questions">
+            <h2 class="text-xl font-bold text-on-surface mb-3">Frequently Asked Questions</h2>
+            <div id="faq-chips" class="flex flex-wrap gap-2 mb-4"></div>
+            <div id="faq-list" class="flex flex-col gap-2"></div>
+          </section>
+
+          <section aria-label="Step by step guides">
+            <h2 class="text-xl font-bold text-on-surface mb-1">How to Use Bharat Bhumi</h2>
+            <p class="text-sm text-secondary mb-3">Step-by-step guides for everyday tasks.</p>
+            <div id="guides-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+          </section>
+
+          <section id="service-help" aria-label="Service help">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-xl font-bold text-on-surface">Service Help</h2>
+              <a href="services.html" class="text-primary text-sm font-semibold hover:underline">All Services</a>
+            </div>
+            <div id="service-help-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+          </section>
+
+          <section id="status-guide" aria-label="Application status guide">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-xl font-bold text-on-surface">Application Status Guide</h2>
+              <a href="application-tracker.html" class="inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline"><span class="material-symbols-outlined text-[18px]">track_changes</span>Track My Application</a>
+            </div>
+            <div id="status-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+          </section>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <section id="doc-help" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Document help">
+              <h2 class="text-xl font-bold text-on-surface mb-2">Document Help</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Supported types: Sale Deed, Aadhaar / Identity Proof, RoR, Encumbrance Certificate, Tax Receipt, Mutation Application, Survey Sketch.</li>
+                <li>Upload PDF, JPG or PNG files. Keep each file clear and legible.</li>
+                <li>Pending means awaiting nodal-officer review; Rejected shows a reason — correct and re-upload.</li>
+                <li>Re-upload corrected documents from the Documents page; history is preserved.</li>
+              </ul>
+              <a href="documents.html" class="mt-3 inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline">Manage Documents<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </section>
+            <section id="payment-help" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Payment help">
+              <h2 class="text-xl font-bold text-on-surface mb-2">Payment Help</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Pay from Payments using UPI, Card or Net Banking against the Payment Due card.</li>
+                <li>Successful payments issue an instant e-receipt with transaction ID.</li>
+                <li>Pending usually means gateway settlement — wait 24 hours before retrying.</li>
+                <li>Failed payments are never debited twice; raise a grievance with the transaction ID.</li>
+              </ul>
+              <a href="payments.html" class="mt-3 inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline">Go to Payments<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </section>
+            <section id="gis-help" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="GIS help">
+              <h2 class="text-xl font-bold text-on-surface mb-2">GIS / Map Help</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Search parcels by ULPIN, owner name or locality in GIS Explorer.</li>
+                <li>Navy markers are property locations; green centre = verified, saffron = under review.</li>
+                <li>Use + / − to zoom, drag to pan, and the satellite toggle for imagery.</li>
+                <li>Click any parcel for ownership, area, class and tax details.</li>
+              </ul>
+              <a href="gis-explorer.html" class="mt-3 inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline">Open GIS Explorer<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </section>
+            <section id="account-help" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Account help">
+              <h2 class="text-xl font-bold text-on-surface mb-2">Account &amp; Login Help</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Login trouble: check username spelling, reset via the login help option, or contact support.</li>
+                <li>Change your password regularly from Settings → Security (min 8 characters).</li>
+                <li>Sessions expire on logout; use “Logout from all other sessions” on shared devices.</li>
+                <li>Keep profile email and mobile updated for OTPs and status alerts.</li>
+              </ul>
+              <a href="settings.html" class="mt-3 inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline">Account Settings<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </section>
+          </div>
+
+          <section id="contact" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Contact support">
+            <h2 class="text-xl font-bold text-on-surface mb-1">Contact Support</h2>
+            <p class="text-sm text-secondary mb-4">Portal demo contact channels for the SIH 2026 demonstration.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 text-sm">
+              <div class="rounded-lg border border-outline-variant/50 p-3"><p class="font-bold text-on-surface">Citizen Helpline</p><p class="text-secondary mt-1">1800-XXX-XXXX (Demo)</p></div>
+              <div class="rounded-lg border border-outline-variant/50 p-3"><p class="font-bold text-on-surface">Email Support</p><p class="text-secondary mt-1">support@example.demo</p></div>
+              <div class="rounded-lg border border-outline-variant/50 p-3"><p class="font-bold text-on-surface">Grievance Portal</p><a href="#grievance" class="text-primary hover:underline">File below</a></div>
+              <div class="rounded-lg border border-outline-variant/50 p-3"><p class="font-bold text-on-surface">Department Office</p><p class="text-secondary mt-1">District Revenue Office (Demo)</p></div>
+              <div class="rounded-lg border border-outline-variant/50 p-3"><p class="font-bold text-on-surface">Working Hours</p><p class="text-secondary mt-1">Mon–Sat, 9am–6pm (Demo)</p></div>
+            </div>
+            <button id="btn-contact" class="mt-4 inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition">
+              <span class="material-symbols-outlined text-[18px]">support_agent</span>Contact Support
+            </button>
+          </section>
+
+          <section id="grievance" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Grievance">
+            <h2 class="text-xl font-bold text-on-surface mb-1">Grievance / Complaint</h2>
+            <p class="text-sm text-secondary mb-4">Frontend demo only — submissions stay in your browser.</p>
+            <div id="grievance-form-view" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label for="gr-category" class="block text-label-sm font-semibold text-on-surface-variant mb-1">CATEGORY *</label>
+                <select id="gr-category" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option>Delay in application</option><option>Document rejected incorrectly</option><option>Payment not reflecting</option><option>Incorrect land record</option><option>Other</option>
+                </select></div>
+              <div><label for="gr-app" class="block text-label-sm font-semibold text-on-surface-variant mb-1">APPLICATION ID (OPTIONAL)</label>
+                <input id="gr-app" type="text" placeholder="e.g. MUT-2024-8921A" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+              <div><label for="gr-ulpin" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ULPIN (OPTIONAL)</label>
+                <input id="gr-ulpin" type="text" placeholder="e.g. ULP-892-441-A" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+              <div><label for="gr-file" class="block text-label-sm font-semibold text-on-surface-variant mb-1">SUPPORTING DOCUMENT (OPTIONAL)</label>
+                <input id="gr-file" type="file" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+              <div class="md:col-span-2"><label for="gr-desc" class="block text-label-sm font-semibold text-on-surface-variant mb-1">DESCRIBE THE ISSUE *</label>
+                <textarea id="gr-desc" rows="3" placeholder="Min 20 characters" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+              <p id="gr-error" class="field-error hidden md:col-span-2"></p>
+              <div class="md:col-span-2"><button id="btn-submit-grievance" class="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container transition">Submit Grievance</button></div>
+            </div>
+            <div id="grievance-success-view" class="hidden text-center py-6">
+              <div class="w-16 h-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-[#16A34A]">check_circle</span></div>
+              <h3 class="text-xl font-bold mt-3">Grievance submitted successfully</h3>
+              <p class="text-sm text-secondary mt-1">Reference: <span id="grievance-ref" class="font-mono font-bold text-primary">—</span></p>
+              <div class="mt-4 flex gap-2 justify-center">
+                <button id="btn-track-grievance" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-container transition">Track Grievance</button>
+                <button id="btn-new-grievance" class="px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold">File Another</button>
+              </div>
+              <div id="grievance-list" class="mt-4 max-w-md mx-auto text-left"></div>
+            </div>
+          </section>
+
+          <section id="report-issue" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Report issue">
+            <h2 class="text-xl font-bold text-on-surface mb-1">Report a Technical Issue</h2>
+            <div id="issue-form-view" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div><label for="issue-category" class="block text-label-sm font-semibold text-on-surface-variant mb-1">CATEGORY *</label>
+                <select id="issue-category" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option>Login issue</option><option>Page not loading</option><option>Payment issue</option><option>Document upload issue</option><option>Map/GIS issue</option><option>Application issue</option><option>Other</option>
+                </select></div>
+              <div><label for="issue-desc" class="block text-label-sm font-semibold text-on-surface-variant mb-1">DESCRIBE THE ISSUE *</label>
+                <input id="issue-desc" type="text" placeholder="Min 10 characters" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+              <p id="issue-error" class="field-error hidden md:col-span-2"></p>
+              <div class="md:col-span-2"><button id="btn-submit-issue" class="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container transition">Submit Report</button></div>
+            </div>
+            <div id="issue-success-view" class="hidden text-center py-6">
+              <div class="w-16 h-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-[#16A34A]">check_circle</span></div>
+              <h3 class="text-xl font-bold mt-3">Issue reported. Thank you.</h3>
+              <p class="text-sm text-secondary mt-1">Reference: <span id="issue-ref" class="font-mono font-bold text-primary">—</span></p>
+              <button id="btn-new-issue" class="mt-4 px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold">Report Another</button>
+            </div>
+          </section>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <section id="accessibility" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Accessibility">
+              <h2 class="text-xl font-bold text-on-surface mb-2">Accessibility Help</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Text size, high contrast and reduced motion are available in Settings.</li>
+                <li>English and Hindi language options apply across portal headings.</li>
+                <li>All actions are keyboard reachable with visible focus outlines.</li>
+                <li>Form fields carry labels for screen-reader friendly controls.</li>
+              </ul>
+              <a href="settings.html" class="mt-3 inline-flex items-center gap-1 text-primary text-sm font-semibold hover:underline">Open Accessibility Settings<span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+            </section>
+            <section id="emergency" class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Emergency contacts">
+              <h2 class="text-xl font-bold text-on-surface mb-2">Emergency / Important Contacts</h2>
+              <ul class="text-sm text-secondary flex flex-col gap-2 list-disc pl-5">
+                <li>Emergency Services — national emergency helpline.</li>
+                <li>Local Revenue / Tehsil Office — land record emergencies.</li>
+                <li>District Administration — escalation of unresolved issues.</li>
+                <li>Citizen Grievance Authority — appeals beyond the department.</li>
+              </ul>
+              <p class="mt-2 text-xs text-secondary">Generic labels only — no unverified numbers are published in this demo.</p>
+            </section>
+          </div>
+
+          <section id="notices" class="rounded-xl border border-[#e6a800]/40 bg-[#fdf3c7]/40 p-5" aria-label="Important information">
+            <h2 class="text-xl font-bold text-on-surface mb-2">Important Information</h2>
+            <ul class="text-sm text-on-surface-variant flex flex-col gap-2 list-disc pl-5">
+              <li>Never share your password or OTP with anyone.</li>
+              <li>Verify property information before submitting an application.</li>
+              <li>Keep payment receipts and application reference numbers safe.</li>
+              <li>Upload clear and valid documents to avoid rejection.</li>
+              <li>Check your application status regularly.</li>
+            </ul>
+          </section>
+
+          <section aria-label="Related pages">
+            <h2 class="text-xl font-bold text-on-surface mb-3">Explore the Portal</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+              <a href="services.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">medical_services</span><span class="block text-sm font-semibold mt-1">Services</span></a>
+              <a href="my-properties.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">domain</span><span class="block text-sm font-semibold mt-1">My Properties</span></a>
+              <a href="application-tracker.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">assignment</span><span class="block text-sm font-semibold mt-1">Applications</span></a>
+              <a href="documents.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">description</span><span class="block text-sm font-semibold mt-1">Documents</span></a>
+              <a href="payments.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">payments</span><span class="block text-sm font-semibold mt-1">Payments</span></a>
+              <a href="gis-explorer.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">map</span><span class="block text-sm font-semibold mt-1">GIS Explorer</span></a>
+              <a href="settings.html" class="bg-white rounded-xl border border-outline-variant/40 p-3 text-center hover:shadow-md transition"><span class="material-symbols-outlined text-primary">settings</span><span class="block text-sm font-semibold mt-1">Settings</span></a>
+            </div>
+          </section>
+        </div>
+        <div class="h-10"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="support-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true" aria-labelledby="support-title">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30 flex-shrink-0">
+        <h3 id="support-title" class="text-xl font-bold text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">support_agent</span>Contact Support
+        </h3>
+        <button id="support-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-5 overflow-y-auto">
+        <div id="support-form-view" class="flex flex-col gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label for="sp-name" class="block text-label-sm font-semibold text-on-surface-variant mb-1">NAME *</label>
+              <input id="sp-name" type="text" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+            <div><label for="sp-email" class="block text-label-sm font-semibold text-on-surface-variant mb-1">EMAIL *</label>
+              <input id="sp-email" type="email" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+            <div><label for="sp-app" class="block text-label-sm font-semibold text-on-surface-variant mb-1">APPLICATION ID (OPTIONAL)</label>
+              <input id="sp-app" type="text" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+            <div><label for="sp-ulpin" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ULPIN (OPTIONAL)</label>
+              <input id="sp-ulpin" type="text" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+          </div>
+          <div><label for="sp-category" class="block text-label-sm font-semibold text-on-surface-variant mb-1">CATEGORY *</label>
+            <select id="sp-category" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+              <option>Application issue</option><option>Payment issue</option><option>Document issue</option><option>Map/GIS issue</option><option>Account issue</option><option>Other</option>
+            </select></div>
+          <div><label for="sp-subject" class="block text-label-sm font-semibold text-on-surface-variant mb-1">SUBJECT *</label>
+            <input id="sp-subject" type="text" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+          <div><label for="sp-desc" class="block text-label-sm font-semibold text-on-surface-variant mb-1">DESCRIPTION *</label>
+            <textarea id="sp-desc" rows="3" placeholder="Min 20 characters" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea></div>
+          <div><label for="sp-file" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ATTACHMENT (OPTIONAL)</label>
+            <input id="sp-file" type="file" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></div>
+          <p id="sp-error" class="field-error hidden"></p>
+        </div>
+        <div id="support-success-view" class="hidden text-center py-6">
+          <div class="w-16 h-16 mx-auto rounded-full bg-green-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-[#16A34A]">check_circle</span></div>
+          <h4 class="text-xl font-bold mt-3">Request submitted</h4>
+          <p class="text-sm text-secondary mt-1">Ticket: <span id="support-ticket-id" class="font-mono font-bold text-primary">—</span></p>
+          <p class="text-sm text-secondary mt-1">Our demo helpdesk will respond within 2 working days.</p>
+        </div>
+      </div>
+      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3 flex-shrink-0">
+        <button id="support-cancel-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
+        <button id="btn-submit-support" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Submit Request</button>
+        <button id="support-done-btn" class="hidden px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="help-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+  <script src="js/notifications.js?v=2"></script>
+  <script type="module" src="js/help.js"></script>
+</body>
+</html>

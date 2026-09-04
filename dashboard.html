@@ -25,6 +25,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet">
 
+  <!-- Leaflet (same version as GIS Explorer) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <!-- Global Styles -->
   <link rel="stylesheet" href="css/styles.css">
 
@@ -158,12 +161,12 @@
           Explore
         </a>
 
-        <a href="#" data-action="quick-action" data-action-name="Services"
+        <a href="services.html"
           class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">
           Services
         </a>
 
-        <a href="#" data-action="quick-action" data-action-name="Help"
+        <a href="help.html"
           class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">
           Help
         </a>
@@ -961,16 +964,16 @@
             <section
               class="bg-white rounded-lg border border-outline-variant/40 shadow-sm h-64 overflow-hidden relative">
 
-              <div class="absolute inset-0 bg-gray-200 bg-cover bg-center" style="
+              <div id="dashboard-map" class="absolute inset-0 bg-gray-200 bg-cover bg-center" style="
                   background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzJfL3reoSr5cYbrKJ7Mp5ZxxiArO3eSAmrsNh1cNhx38wzA8KjbmqWNVZ0Z7VRRdoJ_D6Etvuw7NTjYuIGBL84dsua4kdn63M3SOtHtWvoIX-Rs_AXhpDzj9sAPBZJH4x8sSoEgTMqJCVt51fZmt5A-MIc0lATVHw47qUuxBjWzcF6Gmnw0FLJFDWe5_7pP-r_QiDmbkL6EbFo3Jii_t4VUs4oZLyoMoif7niBnRk8Xv_-09HZKa9TA');
                 ">
 
 
                 <!-- MAP CONTROLS -->
 
-                <div class="absolute right-2 top-2 flex flex-col gap-1">
+                <div class="absolute right-2 top-2 flex flex-col gap-1 z-[600]">
 
-                  <button class="bg-white p-2 rounded-md shadow border border-outline-variant text-primary"
+                  <button id="dash-zoom-in" class="bg-white p-2 rounded-md shadow border border-outline-variant text-primary"
                     title="Zoom in">
 
                     <span class="material-symbols-outlined text-[18px]">
@@ -980,7 +983,7 @@
                   </button>
 
 
-                  <button class="bg-white p-2 rounded-md shadow border border-outline-variant text-primary"
+                  <button id="dash-zoom-out" class="bg-white p-2 rounded-md shadow border border-outline-variant text-primary"
                     title="Zoom out">
 
                     <span class="material-symbols-outlined text-[18px]">
@@ -995,7 +998,7 @@
                 <!-- MAP FOOTER -->
 
                 <div
-                  class="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm rounded-md border border-outline-variant/50 shadow-sm p-3 flex items-center justify-between">
+                  class="absolute bottom-2 left-2 right-2 z-[500] bg-white/95 backdrop-blur-sm rounded-md border border-outline-variant/50 shadow-sm p-3 flex items-center justify-between">
 
                   <span class="font-semibold text-sm flex items-center gap-1">
 
@@ -1132,8 +1135,10 @@
        ONLY LOAD ONCE
        ===================================================== -->
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module" src="js/dashboard.js"></script>
 
+  <script src="js/notifications.js?v=2"></script>
   <script src="js/sidebar-active.js"></script>
 </body>
 

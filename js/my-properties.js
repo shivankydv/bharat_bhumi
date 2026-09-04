@@ -1,5 +1,7 @@
-import { authService } from "./services/auth-service.js";
-import { api } from "./services/api.js";
+import { isAuthenticated, logout } from "./services/auth-service.js";
+import { DEMO_PROPERTIES } from "./demo-data.js";
+
+const STORE_KEY = "myPropertiesDemoData";
 
 const STATS_TOTAL = document.getElementById("stats-total");
 const STATS_VERIFIED = document.getElementById("stats-verified");
@@ -23,6 +25,32 @@ const modalBody = document.getElementById("modal-body");
 const modalTitle = document.getElementById("modal-title");
 const modalActionBtn = document.getElementById("modal-action-btn");
 
+let currentProperties = [];
+
+// Dashboard uses "Verified"/"Under Review"; normalize to filter keys.
+function statusKey(status) {
+  const s = String(status || "").toLowerCase();
+  if (s === "verified") return "verified";
+  if (s === "under_review" || s === "under review") return "under_review";
+  return "pending";
+}
+
+function statusLabel(key) {
+  if (key === "verified") return "Verified";
+  if (key === "under_review") return "Under Review";
+  return "Pending";
+}
+
+function statusClass(key) {
+  if (key === "verified") return "status-verified";
+  if (key === "under_review") return "status-under-review";
+  return "status-pending";
+}
+
+function normalize(p) {
+  return { ...p, status: statusKey(p.status) };
+}
+
 function renderStats(properties) {
   const total = properties.length;
   const verified = properties.filter(p => p.status === "verified").length;
@@ -33,6 +61,15 @@ function renderStats(properties) {
   if (STATS_VERIFIED) STATS_VERIFIED.textContent = verified;
   if (STATS_UNDER_REVIEW) STATS_UNDER_REVIEW.textContent = underReview;
   if (STATS_PENDING) STATS_PENDING.textContent = pending;
+
+  const grid = document.getElementById("stats-grid");
+  if (grid) {
+    grid.innerHTML = `
+      <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4"><p class="text-label-sm font-semibold text-on-surface-variant">Total Properties</p><p class="text-3xl font-bold text-primary mt-1">${total}</p></div>
+      <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4"><p class="text-label-sm font-semibold text-on-surface-variant">Verified</p><p class="text-3xl font-bold text-[#16A34A] mt-1">${verified}</p></div>
+      <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4"><p class="text-label-sm font-semibold text-on-surface-variant">Under Review</p><p class="text-3xl font-bold text-[#EA580C] mt-1">${underReview}</p></div>
+      <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4"><p class="text-label-sm font-semibold text-on-surface-variant">Pending</p><p class="text-3xl font-bold text-[#6366F1] mt-1">${pending}</p></div>`;
+  }
 }
 
 function renderPropertiesTable(properties) {
@@ -47,13 +84,6 @@ function renderPropertiesTable(properties) {
   emptyState.classList.add("hidden");
   propertiesTbody.innerHTML = properties
     .map((p, idx) => {
-      const statusClass =
-        p.status === "verified"
-          ? "status-verified"
-          : p.status === "under_review"
-            ? "status-under-review"
-            : "status-pending";
-
       return `
         <tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition">
           <td class="px-6 py-4 font-medium text-primary truncate" title="${p.ulpin}">
@@ -65,7 +95,7 @@ function renderPropertiesTable(properties) {
           </td>
           <td class="px-6 py-4 text-sm text-secondary">${p.area || "—"}</td>
           <td class="px-6 py-4">
-            <span class="status-badge ${statusClass}">${p.status}</span>
+            <span class="status-badge ${statusClass(p.status)}">${statusLabel(p.status)}</span>
           </td>
           <td class="px-6 py-4 text-sm text-secondary">${p.lastUpdated || "—"}</td>
           <td class="px-6 py-4 text-right">
@@ -95,15 +125,8 @@ function renderPropertiesCards(properties) {
   emptyState.classList.add("hidden");
   propertiesCards.innerHTML = properties
     .map((p, idx) => {
-      const statusClass =
-        p.status === "verified"
-          ? "status-verified"
-          : p.status === "under_review"
-            ? "status-under-review"
-            : "status-pending";
-
       return `
-        <div class="property-card bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="openPropertyDetail(${idx})">
+        <div class="property-card bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer" data-idx="${idx}">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-md bg-primary-fixed/30 flex items-center justify-center flex-shrink-0">
               <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">domain</span>
@@ -118,7 +141,7 @@ function renderPropertiesCards(properties) {
             </div>
           </div>
           <div class="mt-3 flex items-center gap-2 text-xs text-secondary">
-            <span class="status-badge ${statusClass}">${p.status}</span>
+            <span class="status-badge ${statusClass(p.status)}">${statusLabel(p.status)}</span>
             <span>${p.area || "—"} | ${p.type}</span>
           </div>
         </div>
@@ -127,8 +150,17 @@ function renderPropertiesCards(properties) {
     .join("");
 }
 
+function readStore() {
+  try {
+    return JSON.parse(localStorage.getItem(STORE_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
 function openPropertyDetail(ulpinOrIdx) {
-  let properties = JSON.parse(localStorage.getItem("myPropertiesDemoData")) || [];
+  if (ulpinOrIdx === null || ulpinOrIdx === undefined) return;
+  let properties = readStore();
 
   if (typeof ulpinOrIdx === "number") {
     // Index-based access for modal from cards
@@ -170,7 +202,7 @@ function openPropertyDetail(ulpinOrIdx) {
       </div>
       <div>
         <p class="text-label-sm text-on-surface-variant mb-1">Status</p>
-        <p class="font-semibold ${p.status === "verified" ? "text-16A34A" : p.status === "under_review" ? "text-EA580C" : "text-6366F1"} status-badge ${p.status === "verified" ? "status-verified" : p.status === "under_review" ? "status-under-review" : "status-pending"}">${p.status}</p>
+        <p><span class="status-badge ${statusClass(p.status)}">${statusLabel(p.status)}</span></p>
       </div>
       <div>
         <p class="text-label-sm text-on-surface-variant mb-1">Last Updated</p>
@@ -195,7 +227,7 @@ function closePropertyDetail() {
 function applyFilters(properties) {
   const searchTerm = (propertySearch.value || "").toLowerCase();
   const statusValue = statusFilter.value;
-  const typeValue = typeFilter.value;
+  const typeValue = (typeFilter.value || "").toLowerCase();
 
   return properties.filter(p => {
     const matchesSearch =
@@ -204,7 +236,7 @@ function applyFilters(properties) {
       (p.type && p.type.toLowerCase().includes(searchTerm));
 
     const matchesStatus = statusValue === "all" || p.status === statusValue;
-    const matchesType = typeValue === "all" || p.type === typeValue;
+    const matchesType = typeValue === "all" || String(p.type || "").toLowerCase() === typeValue;
 
     return matchesSearch && matchesStatus && matchesType;
   });
@@ -216,97 +248,74 @@ function renderPropertyCount(properties) {
   }
 }
 
-async function loadProperties() {
-  if (!authService.isAuthenticated()) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  let properties;
-
-  try {
-    const response = await api.get("/api/v1/parcels");
-    properties = response.data || [];
-  } catch (error) {
-    console.warn("API fallback to demo data:", error.message);
-    properties = getDemoProperties();
-  }
-
+function renderAll(properties) {
   renderStats(properties);
   renderPropertiesTable(properties);
   renderPropertiesCards(properties);
   renderPropertyCount(properties);
-
-  // Add event listeners after rendering
-  setupEventListeners(properties);
+  bindDetailButtons();
 }
 
-function getDemoProperties() {
-  return [
-    {
-      ulpin: "ULP-892-441-A",
-      type: "Agricultural",
-      location: "Sangli, Maharashtra",
-      area: "2.5 ha",
-      status: "verified",
-      lastUpdated: "2024-03-15",
-      ownerName: "Rajesh Kumar",
-    },
-    {
-      ulpin: "ULP-110-398-B",
-      type: "Residential",
-      location: "Pune, Maharashtra",
-      area: "1200 sq ft",
-      status: "verified",
-      lastUpdated: "2024-02-28",
-      ownerName: "Priya Sharma",
-    },
-    {
-      ulpin: "Pending-ID-777-C",
-      type: "Commercial",
-      location: "Mumbai, Maharashtra",
-      area: "5000 sq ft",
-      status: "under_review",
-      lastUpdated: "2024-01-20",
-      ownerName: "Amit Patel",
-    },
-  ];
+function bindDetailButtons() {
+  // View detail from table rows
+  document.querySelectorAll(".view-detail-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const ulpin = btn.getAttribute("data-ulpin");
+      openPropertyDetail(ulpin);
+    });
+  });
+
+  // Open detail from mobile cards
+  document.querySelectorAll(".property-card[data-idx]").forEach((card) => {
+    card.addEventListener("click", () => {
+      openPropertyDetail(Number(card.getAttribute("data-idx")));
+    });
+  });
+}
+
+function loadProperties() {
+  if (!isAuthenticated()) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // SIH DEMO: the Dashboard demo data is the single source of truth here.
+  // The backend parcels endpoint currently returns test records
+  // (ULPIN-SEARCH-001, USER-TEST-001, ...) with a different field shape,
+  // so API data must NOT override the demo list on this page.
+  // Backend is untouched; no endpoints added or removed.
+  const properties = DEMO_PROPERTIES.map(normalize);
+
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(properties));
+  } catch (e) {
+    console.warn("[My Properties] Failed to persist properties:", e);
+  }
+
+  currentProperties = properties;
+  renderAll(properties);
 }
 
 function setupEventListeners() {
   // Search
   if (propertySearch) {
     propertySearch.addEventListener("input", () => {
-      const filtered = applyFilters(
-        JSON.parse(localStorage.getItem("myPropertiesDemoData")) || []
-      );
-      renderPropertiesTable(filtered);
-      renderPropertiesCards(filtered);
-      renderPropertyCount(filtered);
+      renderAll(applyFilters(currentProperties));
     });
   }
 
   // Status filter
   if (statusFilter) {
     statusFilter.addEventListener("change", () => {
-      const filtered = applyFilters(
-        JSON.parse(localStorage.getItem("myPropertiesDemoData")) || []
-      );
-      renderPropertiesTable(filtered);
-      renderPropertiesCards(filtered);
-      renderPropertyCount(filtered);
+      renderAll(applyFilters(currentProperties));
     });
   }
 
   // Type filter
   if (typeFilter) {
     typeFilter.addEventListener("change", () => {
-      const filtered = applyFilters(
-        JSON.parse(localStorage.getItem("myPropertiesDemoData")) || []
-      );
-      renderPropertiesTable(filtered);
-      renderPropertiesCards(filtered);
-      renderPropertyCount(filtered);
+      renderAll(applyFilters(currentProperties));
     });
   }
 
@@ -316,13 +325,23 @@ function setupEventListeners() {
       propertySearch.value = "";
       statusFilter.value = "all";
       typeFilter.value = "all";
+      renderAll(currentProperties);
+    });
+  }
 
-      const props = JSON.parse(
-        localStorage.getItem("myPropertiesDemoData") || "[]"
-      );
-      renderPropertiesTable(props);
-      renderPropertiesCards(props);
-      renderPropertyCount(props);
+  // Export (demo): download the visible records as a text summary.
+  if (btnExport) {
+    btnExport.addEventListener("click", () => {
+      const lines = ["BHARAT BHUMI - PROPERTY RECORDS (DEMO)", "=======================================",
+        ...applyFilters(currentProperties).map(p => `${p.ulpin} | ${p.type} | ${p.location} | ${p.area} | ${statusLabel(p.status)}`)];
+      const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "my-properties.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     });
   }
 
@@ -343,22 +362,32 @@ function setupEventListeners() {
     });
   }
 
-  // View detail from table rows
-  document.querySelectorAll(".view-detail-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const ulpin = btn.getAttribute("data-ulpin");
-      openPropertyDetail(ulpin);
-    });
-  });
-
   // Add property button
   const addBtn = document.getElementById("btn-add-property");
   if (addBtn) {
     addBtn.addEventListener("click", () => {
-      openPropertyDetail(null);
+      window.location.href = "new-application.html";
     });
   }
+
+  const firstBtn = document.getElementById("btn-first-property");
+  if (firstBtn) {
+    firstBtn.addEventListener("click", () => {
+      window.location.href = "new-application.html";
+    });
+  }
+
+  // Logout
+  const doLogout = () => logout("login.html");
+  const topLogout = document.getElementById("btn-topnav-logout");
+  if (topLogout) topLogout.addEventListener("click", doLogout);
+  const sideLogout = document.getElementById("btn-sidebar-logout");
+  if (sideLogout) sideLogout.addEventListener("click", doLogout);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupEventListeners();
+  loadProperties();
+});
 
 export { loadProperties, openPropertyDetail, closePropertyDetail };

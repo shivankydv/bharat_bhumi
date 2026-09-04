@@ -280,12 +280,27 @@ function setupSession() {
   if ($("btn-sidebar-logout")) $("btn-sidebar-logout").addEventListener("click", doLogout);
 }
 
+// Preselects the wizard service from a safe ?service=<id> query parameter
+// (used by the Services catalogue). Unknown values are ignored.
+function applyServiceParam() {
+  try {
+    const id = new URLSearchParams(window.location.search).get("service");
+    if (id && serviceById(id)) {
+      state.service = id;
+      state.docs = {};
+    }
+  } catch {
+    /* ignore malformed URLs */
+  }
+}
+
 function init() {
   if (!isAuthenticated()) {
     window.location.href = "login.html";
     return;
   }
   setupSession();
+  applyServiceParam();
   renderServices();
   renderStepper();
   const go = (from, to, validator) => {
