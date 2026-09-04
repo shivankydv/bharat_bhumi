@@ -1,5 +1,5 @@
 /**
- * Shared Tailwind CSS Configuration for Bharat LandStack
+ * Shared Tailwind CSS Configuration for Bharat Bhumi
  * Extracted from original Stitch export to ensure exact design token consistency across pages.
  */
 tailwind = {

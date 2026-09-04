@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Bharat Bhumi - Authentication</title>
+
+  <!-- Extracted Tailwind CSS Config -->
+  <script src="js/tailwind-config.js"></script>
+
+  <!-- Tailwind CSS CDN with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts & Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+  <!-- Extracted Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col justify-between font-body-md antialiased">
+
+  <!-- Top Navigation Header -->
+  <header class="w-full bg-primary shadow-md py-3 px-gutter">
+    <div class="max-w-container-max mx-auto flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group text-on-primary focus:outline-none">
+        <img alt="Bharat Bhumi Logo" class="h-9 w-9 object-contain bg-white rounded-md p-1 group-hover:scale-105 transition-transform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI">
+        <span class="text-headline-md font-headline-md font-bold text-on-primary tracking-tight">Bharat Bhumi</span>
+      </a>
+      <a href="index.html" class="text-on-primary/80 hover:text-on-primary text-label-md font-label-md flex items-center gap-1 hover:bg-on-primary/10 px-3 py-1.5 rounded transition-colors">
+        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+        <span>Back to Portal</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Auth Container -->
+  <main class="flex-grow flex items-center justify-center px-4 py-10 relative overflow-hidden">
+    <!-- Subtle Background Graphic Overlay -->
+    <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWhFc-pqRgmH4gZr1CI4slBVcW0ElgTEqDaRJGlAuDD1XmDrxi1dER_-VbEAMidVm0LzDHovwP0kRmbuzDUw9LJUEdXUSOlSiGOiAC4XGINU_E5yxEVbUdY1qiBvZZS42MbIyMWrMzPkm_L6_WAcST1uMuuIba2_g0CUikQ_H_qK_dGqlcEaHFXvXgyEt004usth2FAlgXykD1QZ2AoWjw39GaNPm7GfmBAoWGsxUNKxlp206ZH7QgtA'); background-size: cover; background-position: center;"></div>
+
+    <!-- Auth Card -->
+    <div class="relative z-10 w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/40 overflow-hidden">
+      
+      <!-- Card Header Header Accent -->
+      <div class="bg-gradient-to-r from-primary-container to-primary p-6 text-on-primary text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-3 backdrop-blur-sm border border-white/20">
+          <span class="material-symbols-outlined text-2xl text-on-primary">verified_user</span>
+        </div>
+        <h1 class="text-headline-md font-headline-md font-bold tracking-tight">Portal Authentication</h1>
+        <p class="text-label-md text-on-primary/80 mt-1">Sign in to access your land records & citizen services</p>
+      </div>
+
+      <!-- Tab Navigation Switcher -->
+      <div class="flex border-b border-outline-variant/30 bg-surface-container-low p-1.5 gap-1">
+        <button id="tab-login" type="button" class="flex-1 py-2.5 px-4 text-center rounded-md font-label-md font-bold text-label-md transition-all duration-200 bg-primary text-on-primary shadow-sm flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">login</span>
+          <span>Login</span>
+        </button>
+        <button id="tab-signup" type="button" class="flex-1 py-2.5 px-4 text-center rounded-md font-label-md font-bold text-label-md transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">person_add</span>
+          <span>Signup</span>
+        </button>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        
+        <!-- Global Feedback Alert Container -->
+        <div id="auth-alert" class="hidden mb-6 p-4 rounded-lg border text-body-md flex items-start gap-3 transition-all duration-200">
+          <span id="auth-alert-icon" class="material-symbols-outlined text-xl flex-shrink-0 mt-0.5">error</span>
+          <div class="flex-1 text-sm leading-relaxed" id="auth-alert-message"></div>
+        </div>
+
+        <!-- LOGIN FORM PANEL -->
+        <form id="login-form" class="space-y-5" novalidate>
+          <div>
+            <label for="login-username" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Username <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">account_circle</span>
+              </div>
+              <input type="text" id="login-username" name="username" required autocomplete="username"
+                class="block w-full pl-10 pr-3 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors"
+                placeholder="Enter your username">
+            </div>
+          </div>
+
+          <div>
+            <label for="login-password" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Password <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">lock</span>
+              </div>
+              <input type="password" id="login-password" name="password" required autocomplete="current-password"
+                class="block w-full pl-10 pr-10 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors"
+                placeholder="Enter your password">
+              <button type="button" id="toggle-login-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary hover:text-on-surface focus:outline-none" title="Toggle password visibility">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-label-md">
+            <label class="flex items-center gap-2 text-on-surface-variant cursor-pointer select-none">
+              <input type="checkbox" id="remember-me" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4">
+              <span>Remember session</span>
+            </label>
+            <a href="#" id="forgot-password-link" class="text-primary hover:underline font-medium">Forgot Password?</a>
+          </div>
+
+          <button type="submit" id="btn-login-submit"
+            class="w-full py-3 px-4 bg-primary hover:bg-primary-container text-on-primary font-label-md font-bold rounded-md shadow-md transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <span id="login-spinner" class="hidden animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+            <span class="material-symbols-outlined text-[20px]">login</span>
+            <span id="login-btn-text">Sign In</span>
+          </button>
+        </form>
+
+        <!-- SIGNUP FORM PANEL (Hidden by default) -->
+        <form id="signup-form" class="hidden space-y-5" novalidate>
+          <div>
+            <label for="signup-username" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Username <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">person</span>
+              </div>
+              <input type="text" id="signup-username" name="username" required autocomplete="username"
+                class="block w-full pl-10 pr-3 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors"
+                placeholder="Choose a username">
+            </div>
+          </div>
+
+          <div>
+            <label for="signup-password" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Password <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">key</span>
+              </div>
+              <input type="password" id="signup-password" name="password" required autocomplete="new-password"
+                class="block w-full pl-10 pr-10 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors"
+                placeholder="Enter password">
+              <button type="button" id="toggle-signup-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary hover:text-on-surface focus:outline-none">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="signup-confirm-password" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Confirm Password <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+              </div>
+              <input type="password" id="signup-confirm-password" name="confirmPassword" required autocomplete="new-password"
+                class="block w-full pl-10 pr-3 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors"
+                placeholder="Re-enter password">
+            </div>
+          </div>
+
+          <div>
+            <label for="signup-role" class="block text-label-md font-label-md font-semibold text-on-surface mb-1.5">
+              Requested Role <span class="text-error">*</span>
+            </label>
+            <div class="relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">badge</span>
+              </div>
+              <select id="signup-role" name="role" required
+                class="block w-full pl-10 pr-10 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-body-md transition-colors appearance-none cursor-pointer">
+                <option value="USER">USER (Read-Only Access)</option>
+                <option value="ADMIN">ADMIN (Full CRUD Access)</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-secondary">
+                <span class="material-symbols-outlined text-[20px]">expand_more</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-signup-submit"
+            class="w-full py-3 px-4 bg-primary hover:bg-primary-container text-on-primary font-label-md font-bold rounded-md shadow-md transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+            <span class="material-symbols-outlined text-[20px]">person_add</span>
+            <span>Create Account</span>
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Card Footer Notice -->
+      <div class="px-6 py-3.5 bg-surface-container-low border-t border-outline-variant/30 text-center flex items-center justify-center gap-2 text-label-sm text-secondary">
+        <span class="material-symbols-outlined text-[16px] text-primary">security</span>
+        <span>Secure 256-bit Encrypted Session • Ministry of Rural Development</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-4 px-gutter bg-surface-container-high border-t border-outline-variant text-center text-label-sm text-on-surface-variant">
+    <div class="max-w-container-max mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+      <span>© 2024 Bharat Bhumi. All Rights Reserved.</span>
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+        <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-primary transition-colors">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Auth Script -->
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>

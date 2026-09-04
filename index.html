@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Bharat LandStack - Trusted Land Governance</title>
+  <title>Bharat Bhumi - Trusted Land Governance</title>
 
   <!-- Extracted Tailwind CSS Config -->
   <script src="js/tailwind-config.js"></script>
@@ -23,17 +23,20 @@
   <!-- TopNavBar -->
   <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto bg-primary dark:bg-primary-container shadow-md transition-all duration-200">
     <div class="flex items-center gap-4">
-      <img alt="Bharat LandStack" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI">
-      <span class="text-headline-md font-headline-md font-bold text-on-primary dark:text-on-primary-container">Bharat LandStack</span>
+      <img alt="Bharat Bhumi" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI">
+      <span class="text-headline-md font-headline-md font-bold text-on-primary dark:text-on-primary-container">Bharat Bhumi</span>
     </div>
     <div class="hidden md:flex items-center gap-8">
       <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Explore</a>
       <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Services</a>
       <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Help</a>
     </div>
-    <div class="flex items-center gap-4">
+    <div id="auth-nav-container" class="flex items-center gap-4">
       <span class="hidden md:block text-label-md font-label-md text-on-primary/80">Language: EN/HI</span>
-      <button class="bg-on-primary text-primary px-4 py-2 rounded-DEFAULT text-label-md font-label-md font-bold hover:bg-surface-container-highest transition-colors">Login</button>
+      <a href="login.html" id="btn-nav-login" class="bg-on-primary text-primary px-4 py-2 rounded-DEFAULT text-label-md font-label-md font-bold hover:bg-surface-container-highest transition-colors flex items-center gap-1.5 shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">login</span>
+        <span>Login</span>
+      </a>
     </div>
   </nav>
 
@@ -49,14 +52,14 @@
         <h1 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-primary">One Digital Infrastructure for Trusted Land Governance</h1>
         <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">A secure, transparent, and efficient platform integrating nationwide land records, modernizing citizen services, and empowering informed decision-making through advanced geospatial technology.</p>
         <div class="flex flex-col sm:flex-row gap-stack-md mt-4">
-          <button class="bg-primary text-on-primary px-6 py-3 rounded-lg text-label-md font-label-md font-bold shadow-md hover:bg-primary-container transition-colors flex items-center gap-2">
+          <a href="login.html" class="bg-primary text-on-primary px-6 py-3 rounded-lg text-label-md font-label-md font-bold shadow-md hover:bg-primary-container transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
-            Explore Land Records
-          </button>
-          <button class="bg-surface-container-high text-on-surface px-6 py-3 rounded-lg text-label-md font-label-md font-bold border border-outline-variant shadow-sm hover:bg-surface-variant transition-colors flex items-center gap-2">
+            <span>Explore Land Records</span>
+          </a>
+          <a href="login.html" class="bg-surface-container-high text-on-surface px-6 py-3 rounded-lg text-label-md font-label-md font-bold border border-outline-variant shadow-sm hover:bg-surface-variant transition-colors flex items-center gap-2">
             <span class="material-symbols-outlined">description</span>
-            Access Citizen Services
-          </button>
+            <span>Access Citizen Services</span>
+          </a>
         </div>
       </div>
     </section>
@@ -90,7 +93,7 @@
     <section class="bg-surface-container-low py-margin-desktop px-gutter">
       <div class="max-w-container-max mx-auto">
         <div class="text-center mb-stack-lg">
-          <h2 class="text-headline-lg font-headline-lg text-primary">How Bharat LandStack Works</h2>
+          <h2 class="text-headline-lg font-headline-lg text-primary">How Bharat Bhumi Works</h2>
           <p class="text-body-md font-body-md text-on-surface-variant mt-2 max-w-2xl mx-auto">Streamlined processes for secure and transparent land administration.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md">
@@ -125,7 +128,7 @@
   <!-- Footer -->
   <footer class="w-full py-stack-lg px-gutter flex flex-col md:flex-row justify-between items-center gap-stack-md max-w-container-max mx-auto bg-surface-container-high dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline mt-auto">
     <div class="flex items-center gap-2">
-      <span class="text-label-md font-label-md font-bold text-primary">© 2024 Bharat LandStack. Ministry of Rural Development.</span>
+      <span class="text-label-md font-label-md font-bold text-primary">© 2024 Bharat Bhumi. Ministry of Rural Development.</span>
     </div>
     <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
       <a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Accessibility</a>
@@ -136,6 +139,6 @@
   </footer>
 
   <!-- Application Scripts -->
-  <script src="js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
