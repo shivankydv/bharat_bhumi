@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Bharat LandStack - Trusted Land Governance</title>
+
+  <!-- Extracted Tailwind CSS Config -->
+  <script src="js/tailwind-config.js"></script>
+
+  <!-- Tailwind CSS CDN with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts & Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+  <!-- Extracted Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 max-w-container-max mx-auto bg-primary dark:bg-primary-container shadow-md transition-all duration-200">
+    <div class="flex items-center gap-4">
+      <img alt="Bharat LandStack" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI">
+      <span class="text-headline-md font-headline-md font-bold text-on-primary dark:text-on-primary-container">Bharat LandStack</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8">
+      <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Explore</a>
+      <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Services</a>
+      <a class="text-on-primary/80 font-label-md hover:text-on-primary hover:bg-on-primary/10 transition-colors px-2 py-1 rounded-DEFAULT" href="#">Help</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="hidden md:block text-label-md font-label-md text-on-primary/80">Language: EN/HI</span>
+      <button class="bg-on-primary text-primary px-4 py-2 rounded-DEFAULT text-label-md font-label-md font-bold hover:bg-surface-container-highest transition-colors">Login</button>
+    </div>
+  </nav>
+
+  <!-- Main Content Canvas -->
+  <main class="flex-grow pt-16">
+    <!-- Hero Section with GIS Map Background -->
+    <section class="relative min-h-[600px] flex items-center justify-center px-gutter py-margin-desktop overflow-hidden border-b border-outline-variant">
+      <!-- Background Map Image -->
+      <div class="absolute inset-0 z-0 opacity-20" data-alt="A highly detailed, professional GIS map interface showing intricate land parcel boundaries in a light mode aesthetic. The map features subtle, modern geometric gridlines in soft blues and grays, representing digital land governance infrastructure. The style is clean, secure, and technologically advanced, with a focus on high-end government digital services and trusted data visualization." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWhFc-pqRgmH4gZr1CI4slBVcW0ElgTEqDaRJGlAuDD1XmDrxi1dER_-VbEAMidVm0LzDHovwP0kRmbuzDUw9LJUEdXUSOlSiGOiAC4XGINU_E5yxEVbUdY1qiBvZZS42MbIyMWrMzPkm_L6_WAcST1uMuuIba2_g0CUikQ_H_qK_dGqlcEaHFXvXgyEt004usth2FAlgXykD1QZ2AoWjw39GaNPm7GfmBAoWGsxUNKxlp206ZH7QgtA')"></div>
+      
+      <!-- Hero Content -->
+      <div class="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-stack-lg">
+        <h1 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-primary">One Digital Infrastructure for Trusted Land Governance</h1>
+        <p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">A secure, transparent, and efficient platform integrating nationwide land records, modernizing citizen services, and empowering informed decision-making through advanced geospatial technology.</p>
+        <div class="flex flex-col sm:flex-row gap-stack-md mt-4">
+          <button class="bg-primary text-on-primary px-6 py-3 rounded-lg text-label-md font-label-md font-bold shadow-md hover:bg-primary-container transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+            Explore Land Records
+          </button>
+          <button class="bg-surface-container-high text-on-surface px-6 py-3 rounded-lg text-label-md font-label-md font-bold border border-outline-variant shadow-sm hover:bg-surface-variant transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined">description</span>
+            Access Citizen Services
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Dashboard -->
+    <section class="py-margin-desktop px-gutter max-w-container-max mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <!-- Stat Card 1 -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/50 flex flex-col items-center text-center">
+          <span class="material-symbols-outlined text-4xl text-primary mb-2">dataset</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface">1.2B+</h3>
+          <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mt-1">Parcels Digitized</p>
+        </div>
+        <!-- Stat Card 2 -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/50 flex flex-col items-center text-center relative overflow-hidden">
+          <div class="absolute inset-0 bg-primary/5"></div>
+          <span class="material-symbols-outlined text-4xl text-primary mb-2 relative z-10">verified_user</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface relative z-10">98%</h3>
+          <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mt-1 relative z-10">Verified Records</p>
+        </div>
+        <!-- Stat Card 3 -->
+        <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/50 flex flex-col items-center text-center">
+          <span class="material-symbols-outlined text-4xl text-primary mb-2">account_balance</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface">28</h3>
+          <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mt-1">States Integrated</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it Works (Bento Grid Style) -->
+    <section class="bg-surface-container-low py-margin-desktop px-gutter">
+      <div class="max-w-container-max mx-auto">
+        <div class="text-center mb-stack-lg">
+          <h2 class="text-headline-lg font-headline-lg text-primary">How Bharat LandStack Works</h2>
+          <p class="text-body-md font-body-md text-on-surface-variant mt-2 max-w-2xl mx-auto">Streamlined processes for secure and transparent land administration.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md">
+          <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col gap-4">
+            <div class="h-12 w-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container font-bold text-headline-sm">1</div>
+            <h3 class="text-label-md font-label-md font-bold text-on-surface">Digital Onboarding</h3>
+            <p class="text-body-sm text-on-surface-variant">Secure Aadhaar-based authentication and profile verification for all citizens and entities.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col gap-4 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+              <span class="material-symbols-outlined text-6xl">search</span>
+            </div>
+            <div class="h-12 w-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container font-bold text-headline-sm relative z-10">2</div>
+            <h3 class="text-label-md font-label-md font-bold text-on-surface relative z-10">Record Discovery</h3>
+            <p class="text-body-sm text-on-surface-variant relative z-10">Search and locate property details using unique parcel IDs or advanced spatial queries.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col gap-4">
+            <div class="h-12 w-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container font-bold text-headline-sm">3</div>
+            <h3 class="text-label-md font-label-md font-bold text-on-surface">Service Request</h3>
+            <p class="text-body-sm text-on-surface-variant">Initiate mutations, request encumbrance certificates, or apply for surveying directly online.</p>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant/30 flex flex-col gap-4 bg-primary text-on-primary">
+            <div class="h-12 w-12 rounded-full bg-on-primary/20 flex items-center justify-center text-on-primary font-bold text-headline-sm">4</div>
+            <h3 class="text-label-md font-label-md font-bold">Transparent Tracking</h3>
+            <p class="text-body-sm text-on-primary/80">Monitor application status in real-time with automated SMS/email alerts and digital delivery.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full py-stack-lg px-gutter flex flex-col md:flex-row justify-between items-center gap-stack-md max-w-container-max mx-auto bg-surface-container-high dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline mt-auto">
+    <div class="flex items-center gap-2">
+      <span class="text-label-md font-label-md font-bold text-primary">© 2024 Bharat LandStack. Ministry of Rural Development.</span>
+    </div>
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+      <a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Accessibility</a>
+      <a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+      <a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+      <a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="js/main.js"></script>
+</body>
+</html>
