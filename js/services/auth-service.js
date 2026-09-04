@@ -103,17 +103,14 @@ export function getCurrentUser() {
 
 /**
  * Clears authentication session and logs user out
+ * @param {string} redirectUrl - URL to redirect to after logout (defaults to login.html)
  */
-export function logout() {
+export function logout(redirectUrl = 'login.html') {
   try {
     localStorage.removeItem(SESSION_KEY);
   } catch (error) {
     console.error('[Auth Service] Error clearing auth session:', error);
   }
-  // Redirect to home or login page
-  if (window.location.pathname.endsWith('login.html')) {
-    window.location.reload();
-  } else {
-    window.location.href = 'index.html';
-  }
+  // Redirect to specified login page
+  window.location.href = redirectUrl;
 }

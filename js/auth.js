@@ -5,10 +5,10 @@
 import { login, isAuthenticated } from './services/auth-service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // If already authenticated, redirect to home page
+  // If already authenticated, redirect to citizen dashboard
   if (isAuthenticated()) {
-    console.log('[Auth] User already authenticated. Redirecting to home...');
-    window.location.href = 'index.html';
+    console.log('[Auth] User already authenticated. Redirecting to dashboard...');
+    window.location.href = 'dashboard.html';
     return;
   }
 
@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showAlert(`Login successful! Welcome back, <strong>${session.username}</strong> (${session.role}).`, 'success');
 
-        // Redirect after brief pause
+        // Redirect to citizen dashboard after brief pause
         setTimeout(() => {
-          window.location.href = 'index.html';
+          window.location.href = 'dashboard.html';
         }, 800);
 
       } catch (error) {

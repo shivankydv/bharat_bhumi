@@ -32,3 +32,525 @@ body {
     transform: translateY(0);
   }
 }
+
+/* =========================================================
+   BHARAT BHUMI — CITIZEN DASHBOARD STITCH VISUAL OVERRIDES
+   ========================================================= */
+
+:root {
+    --bb-primary: #001B44;
+    --bb-primary-dark: #001B44;
+    --bb-primary-container: #002F6C;
+
+    --bb-background: #FAF9FF;
+    --bb-surface: #FFFFFF;
+    --bb-surface-low: #F4F3F9;
+
+    --bb-text: #1A1B20;
+    --bb-text-muted: #434750;
+
+    --bb-border: #E2E8F0;
+
+    --bb-green: #16A34A;
+    --bb-saffron: #EA580C;
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+
+    background: var(--bb-background);
+    color: var(--bb-text);
+
+    font-family: "Hanken Grotesk", sans-serif;
+}
+
+
+/* =========================================================
+   TOP NAVBAR
+   ========================================================= */
+
+/*
+   Stitch:
+   White persistent global header with subtle shadow.
+*/
+
+body > nav,
+body > header,
+header {
+    background: #FFFFFF !important;
+    color: var(--bb-text) !important;
+
+    border-bottom: 1px solid #C4C6D2 !important;
+
+    min-height: 64px;
+
+    box-shadow:
+        0px 2px 4px rgba(0, 47, 108, 0.05);
+
+    z-index: 50;
+}
+
+
+/* Navbar links */
+
+header a,
+header button,
+nav a,
+nav button {
+    color: var(--bb-text) !important;
+}
+
+
+/* Navbar links - keep dark text */
+
+nav a {
+    color: #434750 !important;
+}
+
+nav a:hover {
+    color: var(--bb-primary-dark) !important;
+}
+
+
+/* Navbar search */
+
+header input,
+nav input {
+    background: white !important;
+    color: var(--bb-text) !important;
+
+    border: 1px solid #C4C6D2 !important;
+
+    border-radius: 8px !important;
+
+    height: 40px;
+}
+
+
+/* Search placeholder */
+
+header input::placeholder,
+nav input::placeholder {
+    color: #747781 !important;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+aside {
+    background: #FAF9FF !important;
+
+    border-right: 1px solid #C4C6D2 !important;
+
+    width: 276px !important;
+
+    color: var(--bb-text);
+}
+
+
+/* Sidebar text */
+
+aside,
+aside span,
+aside p {
+    color: var(--bb-text);
+}
+
+
+/* Sidebar navigation */
+
+aside nav {
+    padding: 24px 16px;
+}
+
+
+/* Sidebar links */
+
+aside nav a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 48px;
+
+    padding: 0 16px;
+
+    margin-bottom: 4px;
+
+    border-radius: 8px;
+
+    color: #434750 !important;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+
+/* Sidebar icons */
+
+aside nav a .material-symbols-outlined {
+    color: #434750 !important;
+
+    font-size: 24px;
+}
+
+
+/* Active sidebar item — light soft navy so dark navy text/icons stay readable */
+
+aside nav a.sidebar-active {
+    background: #DCE8F8 !important;
+
+    color: #001B44 !important;
+
+    font-weight: 600;
+}
+
+
+aside nav a.sidebar-active .material-symbols-outlined {
+    color: #001B44 !important;
+}
+
+
+aside nav a.sidebar-active:hover {
+    background: #DCE8F8 !important;
+
+    color: #001B44 !important;
+}
+
+
+aside nav a.sidebar-active:hover .material-symbols-outlined {
+    color: #001B44 !important;
+}
+
+
+/* Hover */
+
+aside nav a:hover {
+    background: #E8E7ED !important;
+
+    color: var(--bb-primary-dark) !important;
+}
+
+aside nav a:hover .material-symbols-outlined {
+    color: var(--bb-primary-dark) !important;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+main {
+    background: var(--bb-background) !important;
+
+    min-height: calc(100vh - 64px);
+
+    padding: 24px !important;
+}
+
+
+/*
+   Main dashboard width.
+*/
+
+main > div {
+    max-width: 1280px;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   WELCOME CARD
+   ========================================================= */
+
+.welcome-card,
+main .welcome-card {
+    background: white !important;
+
+    border: 1px solid #E2E8F0 !important;
+
+    border-radius: 12px !important;
+
+    box-shadow:
+        0 2px 4px rgba(0, 47, 108, 0.05) !important;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+main .bg-white {
+    background: white !important;
+}
+
+
+main .rounded-lg,
+main .rounded-xl {
+    border-radius: 12px !important;
+}
+
+
+/* Soft Stitch shadow */
+
+main .shadow,
+main .shadow-sm {
+    box-shadow:
+        0 2px 4px rgba(0, 47, 108, 0.05) !important;
+}
+
+
+/* =========================================================
+   STAT CARDS
+   ========================================================= */
+
+main .grid {
+    gap: 16px;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+/*
+   The Quick Actions card should be navy,
+   exactly like the Stitch reference.
+*/
+
+.quick-actions,
+main .bg-primary-container {
+    border-radius: 12px !important;
+}
+
+
+/* Quick action buttons - ONLY inside the Quick Actions card */
+
+.quick-actions-card button[data-action="quick-action"] {
+    background: rgba(255, 255, 255, 0.10) !important;
+
+    color: white !important;
+
+    border: 1px solid rgba(255,255,255,0.12) !important;
+
+    border-radius: 8px !important;
+
+    min-height: 52px;
+
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+
+.quick-actions-card button[data-action="quick-action"]:hover {
+    background: rgba(255, 255, 255, 0.20) !important;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+thead {
+    background: #F4F3F9 !important;
+}
+
+
+thead th {
+    color: #434750 !important;
+
+    font-size: 12px !important;
+
+    font-weight: 600 !important;
+
+    letter-spacing: 0.01em;
+
+    text-transform: uppercase;
+
+    padding: 16px !important;
+
+    border-bottom: 1px solid #E2E8F0;
+}
+
+
+tbody tr {
+    background: white !important;
+
+    border-bottom: 1px solid #E2E8F0;
+
+    transition: background 0.15s ease;
+}
+
+
+tbody tr:hover {
+    background: #F8F9FC !important;
+}
+
+
+tbody td {
+    padding: 18px 16px !important;
+
+    color: var(--bb-text);
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.text-green-600,
+.text-green-700 {
+    color: #16A34A !important;
+}
+
+
+.bg-green-100 {
+    background: rgba(22, 163, 74, 0.10) !important;
+}
+
+
+.text-orange-600,
+.text-orange-700 {
+    color: #EA580C !important;
+}
+
+
+.bg-orange-100 {
+    background: rgba(234, 88, 12, 0.10) !important;
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+.map-container,
+main iframe {
+    border-radius: 12px !important;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 4px rgba(0, 47, 108, 0.05);
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY
+   ========================================================= */
+
+.activity-card {
+    background: white !important;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 12px !important;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTONS
+   ========================================================= */
+
+button.bg-primary,
+a.bg-primary {
+    background: var(--bb-primary-container) !important;
+
+    color: white !important;
+
+    border-radius: 8px !important;
+}
+
+
+button.bg-primary:hover,
+a.bg-primary:hover {
+    background: var(--bb-primary-dark) !important;
+}
+
+
+/* =========================================================
+   NEW APPLICATION
+   ========================================================= */
+
+aside a[href="#"] {
+    border-radius: 8px;
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+#dashboard-demo-modal {
+    z-index: 100 !important;
+}
+
+
+#dashboard-demo-modal > div {
+    border-radius: 16px !important;
+
+    box-shadow:
+        0 20px 50px rgba(0, 27, 68, 0.20);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    aside {
+        width: 240px !important;
+    }
+
+    main {
+        padding: 20px !important;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    aside {
+        width: 100% !important;
+
+        position: relative !important;
+    }
+
+    main {
+        padding: 16px !important;
+    }
+}

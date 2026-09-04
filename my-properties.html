@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Bhumi - My Properties</title>
+
+  <!-- =====================================================
+       TAILWIND
+       IMPORTANT: Tailwind MUST load before tailwind-config.js
+       ===================================================== -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Bharat Bhumi Tailwind Configuration -->
+  <script src="js/tailwind-config.js"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- =====================================================
+       MY PROPERTIES LAYOUT
+       ===================================================== -->
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #faf9ff;
+      color: #1a1b20;
+      font-family: "Hanken Grotesk", sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .page-container {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .main-content-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .dashboard-main {
+      margin-left: 256px;
+      width: calc(100% - 256px);
+    }
+
+    @media (min-width: 769px) {
+      .dashboard-content {
+        padding: 24px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        overflow: auto;
+      }
+
+      .dashboard-main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .dashboard-content {
+        padding: 16px;
+      }
+
+      .main-content-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+
+    /* Property card grid for mobile */
+    @media (max-width: 768px) {
+      .property-table-container {
+        display: none;
+      }
+      .property-cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .property-cards-container {
+        display: none;
+      }
+    }
+
+    /* Status badge colors */
+    .status-verified {
+      background: rgba(22, 163, 74, 0.10);
+      color: #16A34A;
+    }
+    .status-under-review {
+      background: rgba(234, 88, 12, 0.10);
+      color: #EA580C;
+    }
+    .status-pending {
+      background: rgba(99, 102, 241, 0.10);
+      color: #6366F1;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Focus styles for accessibility */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid #002F6C;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-on-surface antialiased">
+
+  <!-- =====================================================
+       TOP NAVIGATION
+       ===================================================== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-outline-variant/40" style="box-shadow: 0px 2px 4px rgba(0, 47, 108, 0.05);">
+    <div class="h-full w-full flex items-center px-6 gap-6">
+      <!-- BRAND -->
+      <a href="index.html" class="flex items-center gap-3 flex-shrink-0">
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI"
+          alt="Bharat Bhumi Logo" class="w-9 h-9 rounded-full bg-white p-1 object-contain border border-outline-variant/30">
+        <span class="text-xl font-bold tracking-tight text-primary hidden md:block">
+          Bharat Bhumi
+        </span>
+      </a>
+
+      <!-- ULPIN SEARCH -->
+      <div class="hidden md:flex items-center bg-white text-on-surface rounded-md h-10 w-full max-w-xl px-4 border border-outline-variant/60 focus-within:ring-2 focus-within:ring-primary-fixed-dim transition-all">
+        <span class="material-symbols-outlined text-secondary mr-3" style="font-size: 20px;">
+          search
+        </span>
+        <input id="ulpin-search" type="text" placeholder="Search by ULPIN..."
+          class="w-full h-full bg-transparent border-0 outline-none focus:ring-0 text-base text-on-surface">
+      </div>
+
+      <!-- NAV LINKS -->
+      <div class="hidden lg:flex items-center gap-2 ml-auto">
+        <a href="index.html" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">
+          Explore
+        </a>
+        <a href="#" data-action="quick-action" data-action-name="Services"
+          class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">
+          Services
+        </a>
+        <a href="#" data-action="quick-action" data-action-name="Help"
+          class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">
+          Help
+        </a>
+      </div>
+
+      <!-- NOTIFICATION -->
+      <button id="btn-notifications"
+        class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition text-on-surface-variant"
+        title="Notifications">
+        <span class="material-symbols-outlined">
+          notifications
+        </span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-400"></span>
+      </button>
+
+      <!-- LANGUAGE -->
+      <span class="hidden lg:block whitespace-nowrap text-secondary text-label-md font-label-md">
+        Language: EN/HI
+      </span>
+
+      <!-- USER -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="material-symbols-outlined text-on-surface-variant">
+            account_circle
+          </span>
+          <span id="top-nav-username" class="font-semibold text-on-surface">
+            Citizen
+          </span>
+          <span id="top-nav-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary">
+            USER
+          </span>
+        </div>
+
+        <!-- LOGOUT -->
+        <button id="btn-topnav-logout"
+          class="flex items-center gap-2 px-4 py-2 rounded-md border border-outline-variant hover:bg-surface-container-high transition text-label-md font-label-md text-on-surface"
+          title="Sign out">
+          <span class="material-symbols-outlined text-[18px]">
+            logout
+          </span>
+          <span>
+            Logout
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =====================================================
+       APPLICATION SHELL
+       ===================================================== -->
+  <div class="flex min-h-screen pt-16 page-container">
+
+    <!-- ===================================================
+         SIDEBAR
+         =================================================== -->
+    <aside
+      class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-outline-variant z-40 p-4">
+
+      <!-- PROFILE -->
+      <div class="px-2 mb-7">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-full bg-white border border-outline-variant flex items-center justify-center overflow-hidden flex-shrink-0">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI"
+              alt="Bharat Bhumi" class="w-full h-full object-contain p-1">
+          </div>
+          <div class="min-w-0">
+            <h2 id="sidebar-user-name" class="font-bold text-lg text-primary truncate">
+              Citizen Portal
+            </h2>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-[#16a34a] fill">
+                check_circle
+              </span>
+              <span id="sidebar-user-role" class="text-sm text-secondary truncate">
+                USER • Verified Profile
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR NAVIGATION -->
+      <nav class="flex-1 space-y-1">
+        <!-- DASHBOARD -->
+        <a href="dashboard.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            dashboard
+          </span>
+          <span>
+            Dashboard
+          </span>
+        </a>
+
+        <!-- MY PROPERTIES - ACTIVE -->
+        <a href="my-properties.html"
+          class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings: 'FILL' 1;">
+            domain
+          </span>
+          <span>
+            My Properties
+          </span>
+        </a>
+
+        <!-- APPLICATIONS -->
+        <a href="application-tracker.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            assignment
+          </span>
+          <span>
+            Applications
+          </span>
+        </a>
+
+        <!-- GIS -->
+        <a href="gis-explorer.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            map
+          </span>
+          <span>
+            GIS Explorer
+          </span>
+        </a>
+
+        <!-- DOCUMENTS -->
+        <a href="documents.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            description
+          </span>
+          <span>
+            Documents
+          </span>
+        </a>
+
+        <!-- PAYMENTS -->
+        <a href="payments.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            payments
+          </span>
+          <span>
+            Payments
+          </span>
+        </a>
+      </nav>
+
+      <!-- BOTTOM SIDEBAR -->
+      <div class="pt-4 border-t border-outline-variant space-y-2">
+        <!-- NEW APPLICATION -->
+        <a href="new-application.html"
+          class="w-full bg-primary text-white py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition">
+          <span class="material-symbols-outlined text-[18px]">
+            add
+          </span>
+          New Application
+        </a>
+
+        <!-- SETTINGS -->
+        <a href="settings.html"
+          class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">
+            settings
+          </span>
+          <span>
+            Settings
+          </span>
+        </a>
+
+        <!-- LOGOUT -->
+        <button id="btn-sidebar-logout"
+          class="w-full flex items-center gap-3 text-on-surface-variant hover:bg-red-50 hover:text-red-600 rounded-lg px-4 py-3 transition text-left">
+          <span class="material-symbols-outlined">
+            logout
+          </span>
+          <span>
+            Logout
+          </span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===================================================
+         MAIN CONTENT
+         =================================================== -->
+    <main class="dashboard-main flex-1 overflow-y-auto">
+      <div class="dashboard-content">
+        <!-- 12 COLUMN GRID -->
+        <div class="main-content-grid">
+          <div class="col-span-12 flex flex-col gap-6">
+
+            <!-- =========================================
+                 HEADER SECTION
+                 ========================================= -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div class="text-label-sm font-label-sm text-on-surface-variant mb-2 flex items-center gap-2">
+                  <span>My Properties</span>
+                  <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                  <span class="text-primary font-bold">Property Portfolio</span>
+                </div>
+                <h1 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-primary">
+                  My Properties
+                </h1>
+                <p class="text-body-md font-body-md text-secondary mt-1">
+                  View and manage your registered land and property records.
+                </p>
+              </div>
+              <div class="flex gap-3 w-full md:w-auto">
+                <button id="btn-add-property" data-action="quick-action" data-action-name="New Application"
+                  class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md hover:opacity-90 transition-opacity shadow-sm">
+                  <span class="material-symbols-outlined">add</span>
+                  Add Property
+                </button>
+              </div>
+            </div>
+
+            <!-- =========================================
+                 SEARCH & FILTER BAR
+                 ========================================= -->
+            <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4">
+              <div class="flex flex-col md:flex-row gap-4">
+                <!-- Search -->
+                <div class="flex-1 relative">
+                  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="font-size: 20px;">search</span>
+                  <input type="text" id="property-search" placeholder="Search by ULPIN, location, type..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-surface text-on-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-base transition-colors">
+                </div>
+
+                <!-- Status Filter -->
+                <div class="flex items-center gap-2">
+                  <label for="status-filter" class="text-label-sm font-label-md text-on-surface-variant hidden sm:block">Status:</label>
+                  <select id="status-filter"
+                    class="px-4 py-2.5 bg-white text-on-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-base appearance-none cursor-pointer bg-no-repeat bg-right pr-10"
+                    style="background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23747781' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\"); background-size: 20px;">
+                    <option value="all">All Status</option>
+                    <option value="verified">Verified</option>
+                    <option value="under_review">Under Review</option>
+                    <option value="pending">Pending</option>
+                  </select>
+                </div>
+
+                <!-- Type Filter -->
+                <div class="flex items-center gap-2">
+                  <label for="type-filter" class="text-label-sm font-label-md text-on-surface-variant hidden sm:block">Type:</label>
+                  <select id="type-filter"
+                    class="px-4 py-2.5 bg-white text-on-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-base appearance-none cursor-pointer bg-no-repeat bg-right pr-10"
+                    style="background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23747781' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\"); background-size: 20px;">
+                    <option value="all">All Types</option>
+                    <option value="agricultural">Agricultural</option>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="industrial">Industrial</option>
+                  </select>
+                </div>
+
+                <!-- Clear Filters -->
+                <button id="btn-clear-filters"
+                  class="px-4 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md flex items-center gap-2">
+                  <span class="material-symbols-outlined">filter_alt_off</span>
+                  <span class="hidden sm:inline">Clear</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- =========================================
+                 SUMMARY STATS
+                 ========================================= -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="stats-grid">
+              <!-- Stats will be rendered by JS -->
+            </div>
+
+            <!-- =========================================
+                 PROPERTY LIST
+                 ========================================= -->
+            <section class="bg-white rounded-lg border border-outline-variant/40 shadow-sm overflow-hidden">
+              <!-- HEADER -->
+              <div class="px-6 py-4 border-b border-outline-variant/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface-container-low">
+                <h2 class="text-2xl font-semibold text-on-surface">
+                  Property Records
+                </h2>
+                <div class="flex items-center gap-2">
+                  <span id="property-count" class="text-label-md font-label-md text-secondary">
+                    Showing 0 properties
+                  </span>
+                  <button id="btn-export" class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-primary hover:bg-primary-fixed/30 rounded-md transition text-label-sm font-label-md" title="Export">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Export
+                  </button>
+                </div>
+              </div>
+
+              <!-- DESKTOP TABLE -->
+              <div class="property-table-container overflow-x-auto">
+                <table class="w-full border-collapse text-left" id="properties-table">
+                  <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant/40 text-xs font-semibold text-secondary uppercase tracking-wider">
+                      <th class="px-6 py-4">ULPIN / ID</th>
+                      <th class="px-6 py-4">Type</th>
+                      <th class="px-6 py-4">Location</th>
+                      <th class="px-6 py-4">Area</th>
+                      <th class="px-6 py-4">Status</th>
+                      <th class="px-6 py-4">Last Updated</th>
+                      <th class="px-6 py-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="properties-tbody">
+                    <!-- Rows rendered by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- MOBILE CARDS -->
+              <div class="property-cards-container px-4 py-4" id="properties-cards">
+                <!-- Cards rendered by JS -->
+              </div>
+
+              <!-- EMPTY STATE -->
+              <div id="empty-state" class="hidden py-16 px-6 text-center">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-fixed/30 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-3xl text-primary">domain</span>
+                </div>
+                <h3 class="text-headline-sm font-headline-sm text-on-surface mb-2">No properties found</h3>
+                <p class="text-secondary mb-6 max-w-md mx-auto">You don't have any registered properties yet. Add your first property to get started.</p>
+                <button id="btn-first-property" data-action="quick-action" data-action-name="New Application"
+                  class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition">
+                  <span class="material-symbols-outlined">add</span>
+                  Add Your First Property
+                </button>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- Bottom spacing -->
+        <div class="h-10"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =====================================================
+       PROPERTY DETAILS MODAL
+       ===================================================== -->
+  <div id="property-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden modal-content flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30 flex-shrink-0">
+        <h3 id="modal-title" class="text-xl font-bold text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">domain</span>
+          Property Details
+        </h3>
+        <button id="modal-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div id="modal-body" class="p-5 overflow-y-auto">
+        <!-- Content rendered by JS -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3 flex-shrink-0">
+        <button id="modal-close-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-label-md font-label-md">Close</button>
+        <button id="modal-action-btn" class="px-4 py-2 bg-primary text-white rounded-md font-label-md hover:bg-primary-container transition">View Full Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       MY PROPERTIES CONTROLLER
+       ===================================================== -->
+  <script type="module" src="js/my-properties.js"></script>
+  <script src="js/sidebar-active.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Bhumi - GIS Explorer</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
+    body { min-height: 100vh; background: #faf9ff; color: #1a1b20; font-family: "Hanken Grotesk", sans-serif; overflow-x: hidden; overflow-y: auto; }
+    .page-container { width: 100%; max-width: none; margin: 0; }
+    .gis-shell { margin-left: 256px; width: calc(100% - 256px); }
+    .gis-panels { display: flex; height: calc(100vh - 64px); overflow: hidden; }
+    .gis-left { width: 320px; flex-shrink: 0; }
+    .gis-right { width: 320px; flex-shrink: 0; }
+    #gis-map { width: 100%; height: 100%; min-height: 320px; background: #e0e7ec; z-index: 0; }
+    .map-grid-overlay {
+      background-image: linear-gradient(to right, rgba(0,47,108,.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,47,108,.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .leaflet-container { font-family: "Hanken Grotesk", sans-serif; }
+    @media (max-width: 1023px) {
+      .gis-shell { margin-left: 0; width: 100%; }
+      .gis-panels { flex-direction: column; height: auto; overflow: visible; }
+      .gis-left, .gis-right { width: 100%; }
+      #gis-map { height: 60vh; }
+    }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-outline-variant/40" style="box-shadow: 0px 2px 4px rgba(0,47,108,.05);">
+    <div class="h-full w-full flex items-center px-6 gap-6">
+      <a href="index.html" class="flex items-center gap-3 flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi Logo" class="w-9 h-9 rounded-full bg-white p-1 object-contain border border-outline-variant/30">
+        <span class="text-xl font-bold tracking-tight text-primary hidden md:block">Bharat Bhumi</span>
+      </a>
+      <div class="hidden md:flex items-center gap-2 ml-auto">
+        <a href="index.html" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">Explore</a>
+        <a href="#" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">Services</a>
+        <a href="#" class="px-3 py-2 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition text-label-md font-label-md">Help</a>
+      </div>
+      <button id="btn-notifications" class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition text-on-surface-variant" title="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-400"></span>
+      </button>
+      <span class="hidden lg:block whitespace-nowrap text-secondary text-label-md font-label-md">Language: EN/HI</span>
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+          <span id="top-nav-username" class="font-semibold text-on-surface">Citizen</span>
+          <span id="top-nav-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary">USER</span>
+        </div>
+        <button id="btn-topnav-logout" class="flex items-center gap-2 px-4 py-2 rounded-md border border-outline-variant hover:bg-surface-container-high transition text-label-md font-label-md text-on-surface" title="Sign out">
+          <span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex min-h-screen pt-16 page-container">
+    <aside class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-outline-variant z-40 p-4">
+      <div class="px-2 mb-7">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-white border border-outline-variant flex items-center justify-center overflow-hidden flex-shrink-0">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi" class="w-full h-full object-contain p-1">
+          </div>
+          <div class="min-w-0">
+            <h2 id="sidebar-user-name" class="font-bold text-lg text-primary truncate">Citizen Portal</h2>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-[#16a34a]">check_circle</span>
+              <span id="sidebar-user-role" class="text-sm text-secondary truncate">USER • Verified Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a href="dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+        </a>
+        <a href="my-properties.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">domain</span><span>My Properties</span>
+        </a>
+        <a href="application-tracker.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">assignment</span><span>Applications</span>
+        </a>
+        <a href="gis-explorer.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">map</span><span>GIS Explorer</span>
+        </a>
+        <a href="documents.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">description</span><span>Documents</span>
+        </a>
+        <a href="payments.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">payments</span><span>Payments</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-outline-variant space-y-2">
+        <a href="new-application.html" class="w-full bg-primary text-white py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition">
+          <span class="material-symbols-outlined text-[18px]">add</span>New Application
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">settings</span><span>Settings</span>
+        </a>
+        <button id="btn-sidebar-logout" class="w-full flex items-center gap-3 text-on-surface-variant hover:bg-red-50 hover:text-red-600 rounded-lg px-4 py-3 transition text-left">
+          <span class="material-symbols-outlined">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="gis-shell flex-1">
+      <div class="gis-panels">
+        <section class="gis-left bg-surface-container-lowest border-r border-outline-variant flex flex-col overflow-y-auto" aria-label="Search and filters">
+          <div class="p-4 border-b border-outline-variant bg-white sticky top-0 z-10">
+            <h1 class="text-headline-md font-semibold text-primary mb-2">Search &amp; Filters</h1>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant">search</span>
+              <input id="gis-search" type="text" placeholder="Search ULPIN, Owner, Locality..." class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded bg-white focus:border-primary focus:ring-1 focus:ring-primary outline-none text-body-md">
+            </div>
+          </div>
+          <div class="p-4 flex flex-col gap-6">
+            <div>
+              <h2 class="text-label-md font-bold text-on-surface mb-2">Land Use</h2>
+              <div class="flex flex-col gap-2">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked data-landuse="Agricultural" class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Agricultural</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked data-landuse="Residential" class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Residential</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked data-landuse="Commercial" class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Commercial</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked data-landuse="Industrial" class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Industrial</span></label>
+              </div>
+            </div>
+            <div class="border-t border-outline-variant pt-4">
+              <h2 class="text-label-md font-bold text-on-surface mb-2">Map Layers</h2>
+              <div class="flex flex-col gap-2">
+                <label class="flex items-center gap-2 cursor-pointer"><input id="layer-parcels" type="checkbox" checked class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Parcel Boundaries</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input id="layer-roads" type="checkbox" checked class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Road Networks</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input id="layer-topo" type="checkbox" class="rounded border-outline text-primary focus:ring-primary"><span class="text-body-md text-on-surface-variant">Topography</span></label>
+              </div>
+            </div>
+            <div class="border-t border-outline-variant pt-4">
+              <div class="flex items-center justify-between mb-2">
+                <h2 class="text-label-md font-bold text-on-surface">Parcels</h2>
+                <span id="result-count" class="text-xs text-secondary">5 parcels found</span>
+              </div>
+              <div id="parcel-results" class="flex flex-col gap-2"></div>
+              <button id="btn-clear-gis" class="mt-3 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-md px-3 py-2 transition flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>Clear search &amp; filters
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="flex-1 relative bg-[#e0e7ec] overflow-hidden" aria-label="Map">
+          <div id="gis-map"></div>
+          <div id="map-grid" class="hidden absolute inset-0 map-grid-overlay pointer-events-none z-[500]"></div>
+          <div class="absolute top-4 right-4 flex flex-col gap-2 z-[600]">
+            <button id="btn-zoom-in" class="bg-white text-on-surface p-2 rounded shadow-sm border border-outline-variant hover:bg-surface-container-high transition" title="Zoom In"><span class="material-symbols-outlined">add</span></button>
+            <button id="btn-zoom-out" class="bg-white text-on-surface p-2 rounded shadow-sm border border-outline-variant hover:bg-surface-container-high transition" title="Zoom Out"><span class="material-symbols-outlined">remove</span></button>
+            <button id="btn-satellite" class="bg-white text-primary p-2 rounded shadow-sm border border-outline-variant hover:bg-surface-container-high transition mt-2" title="Toggle Satellite"><span class="material-symbols-outlined">satellite</span></button>
+            <button id="btn-locate" class="bg-white text-on-surface p-2 rounded shadow-sm border border-outline-variant hover:bg-surface-container-high transition" title="Current Location"><span class="material-symbols-outlined">my_location</span></button>
+          </div>
+          <div id="gis-toast" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-[600] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+        </section>
+
+        <aside id="parcel-panel" class="gis-right bg-surface-container-lowest border-l border-outline-variant flex flex-col overflow-y-auto" aria-label="Parcel details">
+          <div class="p-4 border-b border-outline-variant bg-white sticky top-0 flex justify-between items-center z-10">
+            <h2 class="text-headline-md font-semibold text-primary">Parcel Details</h2>
+            <button id="btn-close-details" class="text-on-surface-variant hover:text-on-surface p-1" aria-label="Close details"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div class="p-4 flex flex-col gap-4">
+            <div id="pd-status" class="inline-flex items-center gap-1 bg-green-100/10 text-green-700 px-2 py-1 rounded font-label-sm border border-green-200 self-start"><span class="material-symbols-outlined text-[14px]">check_circle</span> Verified Record</div>
+            <div class="grid grid-cols-2 gap-4">
+              <div><span class="block text-label-sm text-on-surface-variant mb-1">ULPIN</span><span id="pd-ulpin" class="block text-body-md font-bold text-on-surface">—</span></div>
+              <div><span class="block text-label-sm text-on-surface-variant mb-1">Local ID</span><span id="pd-localid" class="block text-body-md text-on-surface">—</span></div>
+            </div>
+            <p class="text-sm text-secondary -mt-2">Locality: <span id="pd-locality" class="font-medium text-on-surface">—</span></p>
+            <div class="border-t border-outline-variant pt-4">
+              <h3 class="text-label-md font-bold text-on-surface mb-2">Ownership Information</h3>
+              <div class="bg-surface-container-low p-3 rounded border border-outline-variant">
+                <div class="flex items-center gap-3">
+                  <div id="pd-initial" class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">R</div>
+                  <div><span id="pd-owner-name" class="block text-body-md font-bold text-on-surface">—</span><span id="pd-owner-share" class="block text-label-sm text-on-surface-variant">—</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-outline-variant pt-4">
+              <h3 class="text-label-md font-bold text-on-surface mb-2">Physical Attributes</h3>
+              <ul class="flex flex-col gap-2">
+                <li class="flex justify-between border-b border-outline-variant pb-2"><span class="text-body-md text-on-surface-variant">Total Area</span><span id="pd-area" class="text-body-md text-on-surface font-medium">—</span></li>
+                <li class="flex justify-between border-b border-outline-variant pb-2"><span class="text-body-md text-on-surface-variant">Land Class</span><span id="pd-class" class="text-body-md text-on-surface font-medium">—</span></li>
+                <li class="flex justify-between pb-2"><span class="text-body-md text-on-surface-variant">Irrigation</span><span id="pd-irrigation" class="text-body-md text-on-surface font-medium">—</span></li>
+              </ul>
+            </div>
+            <div class="border-t border-outline-variant pt-4">
+              <h3 class="text-label-md font-bold text-on-surface mb-2">Tax &amp; Encumbrances</h3>
+              <div class="flex items-center gap-2 mb-2 text-on-surface"><span class="material-symbols-outlined text-green-700">task_alt</span><span id="pd-tax" class="text-body-md">—</span></div>
+              <div class="flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-outline">info</span><span id="pd-disputes" class="text-body-md">—</span></div>
+            </div>
+            <div class="mt-auto pt-4 flex gap-2">
+              <button id="btn-download-ror" class="flex-1 bg-surface-container-high text-on-surface text-label-md py-2 rounded hover:bg-outline-variant transition-colors text-center border border-outline-variant font-medium">Download RoR</button>
+              <button id="btn-action" class="flex-1 bg-primary text-on-primary text-label-md py-2 rounded hover:bg-primary-container transition-colors text-center font-medium">Action</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="js/gis-explorer.js"></script>
+  <script src="js/sidebar-active.js"></script>
+</body>
+</html>
