@@ -1,4 +1,4 @@
-import { isAuthenticated, logout } from "./services/auth-service.js";
+import { isAuthenticated, logout, requirePortal } from "./services/auth-service.js";
 import { DEMO_PROPERTIES } from "./demo-data.js";
 
 const STORE_KEY = "myPropertiesDemoData";
@@ -275,8 +275,7 @@ function bindDetailButtons() {
 }
 
 function loadProperties() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
+  if (!requirePortal("citizen")) {
     return;
   }
 

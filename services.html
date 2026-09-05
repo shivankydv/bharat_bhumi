@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bharat Bhumi - Land & Property Services</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="js/tailwind-config.js"></script>
+  <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=20260905">
   <style>
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
@@ -92,6 +92,9 @@
         <a href="payments.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">payments</span><span>Payments</span>
         </a>
+        <a href="land-discovery-request.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">travel_explore</span><span>Land Discovery Request</span>
+        </a>
       </nav>
       <div class="pt-4 border-t border-outline-variant space-y-2">
         <a href="new-application.html" class="w-full bg-primary text-white py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition">
@@ -123,6 +126,19 @@
                 class="w-full pl-12 pr-4 py-3 bg-white text-on-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-base shadow-sm transition-colors">
             </div>
           </div>
+
+          <section class="rounded-xl border border-primary/30 bg-primary-fixed/20 p-5 flex flex-col md:flex-row md:items-center gap-4" aria-label="Land discovery">
+            <div class="w-11 h-11 rounded-lg bg-primary text-white flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined">travel_explore</span>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-xl font-bold text-on-surface">Can't find your land?</h2>
+              <p class="text-sm text-secondary mt-0.5">Don't know your ULPIN, survey number or have your land documents? Request help finding your land record.</p>
+            </div>
+            <a href="land-discovery-request.html" class="inline-flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition flex-shrink-0">
+              Start Land Discovery Request<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+          </section>
 
           <section aria-label="Popular services">
             <h2 class="text-xl font-bold text-on-surface mb-3">Popular Services</h2>
@@ -229,7 +245,7 @@
   </div>
 
   <div id="svc-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
-  <script src="js/notifications.js?v=2"></script>
-  <script type="module" src="js/services.js"></script>
+  <script src="js/notifications.js?v=20260905"></script>
+  <script type="module" src="js/services.js?v=20260905"></script>
 </body>
 </html>

@@ -529,3 +529,111 @@ export function nowStamp() {
     day: "2-digit", month: "short", year: "numeric", hour: "numeric", minute: "2-digit"
   });
 }
+
+/* =========================================================
+   ADMIN DASHBOARD STATS + ACTIVITY (demo figures only)
+   ========================================================= */
+
+export const ADMIN_DASH_STATS = [
+  { label: "Total Properties", value: "1,284", icon: "domain" },
+  { label: "Pending Applications", value: "24", icon: "pending_actions" },
+  { label: "Documents Awaiting Verification", value: "17", icon: "fact_check" },
+  { label: "Pending Payments", value: "9", icon: "payments" },
+  { label: "Active Grievances", value: "7", icon: "feedback" }
+];
+
+export const VERIFICATION_ACTIVITY = [
+  { time: "11:20 AM", text: "Sale Deed verified for APP-2026-00128." },
+  { time: "11:03 AM", text: "Identity proof verified for APP-2026-00124." },
+  { time: "10:15 AM", text: "Ownership record reviewed for ULP-892-441-A." },
+  { time: "09:42 AM", text: "RoR cross-check completed for APP-2026-00125." },
+  { time: "09:12 AM", text: "Additional documents requested for APP-2026-00126." }
+];
+
+/* =========================================================
+   PROPERTY RECORDS (shared 3 + admin-only demo records)
+   ========================================================= */
+
+export const ADMIN_EXTRA_PROPERTIES = [
+  { ulpin: "ULP-310-622-C", type: "Industrial", location: "Plot 9, Industrial Estate, District B", area: "1.1 Hectares", status: "Verified", owner: "Shree Fabricators", updated: "Sep 2026", demoOnly: true },
+  { ulpin: "ULP-455-901-D", type: "Commercial", location: "Shop 12, Market Road, District A", area: "0.2 Hectares", status: "Under Review", owner: "Meena Traders", updated: "Sep 2026", demoOnly: true },
+  { ulpin: "ULP-207-118-E", type: "Agricultural", location: "Khasra 118, Village South, District C", area: "3.6 Hectares", status: "Verified", owner: "Hari Singh", updated: "Aug 2026", demoOnly: true },
+  { ulpin: "ULP-118-540-F", type: "Residential", location: "House 44, Green Colony, District B", area: "900 Sq. Ft.", status: "Pending", owner: "Sunita Devi", updated: "Sep 2026", demoOnly: true }
+];
+
+/* =========================================================
+   USERS / CITIZENS DIRECTORY (demo)
+   ========================================================= */
+
+export const ADMIN_USERS = [
+  { name: "Shivank Yadav", username: "shivank", role: "USER", email: "shivank@example.in", verified: "Verified", lastLogin: "05 Sep 2026, 10:40 AM", status: "Active" },
+  { name: "Rahul Sharma", username: "rahul", role: "USER", email: "rahul@example.in", verified: "Verified", lastLogin: "05 Sep 2026, 09:15 AM", status: "Active" },
+  { name: "Priya Verma", username: "priya", role: "USER", email: "priya@example.in", verified: "Pending", lastLogin: "04 Sep 2026, 03:22 PM", status: "Active" },
+  { name: "Aman Kumar", username: "aman", role: "USER", email: "aman@example.in", verified: "Verified", lastLogin: "04 Sep 2026, 01:02 PM", status: "Active" },
+  { name: "Kavita Singh", username: "kavita", role: "USER", email: "kavita@example.in", verified: "Verified", lastLogin: "03 Sep 2026, 10:11 AM", status: "Suspended" },
+  { name: "Revenue Officer", username: "officer1", role: "ADMIN", email: "officer1@example.in", verified: "Verified", lastLogin: "05 Sep 2026, 09:00 AM", status: "Active" }
+];
+
+/* =========================================================
+   PAYMENT TRANSACTIONS (demo)
+   ========================================================= */
+
+export const ADMIN_TRANSACTIONS = [
+  { id: "TXN-88120451", citizen: "Rajesh Kumar", app: "MUT-2024-8921A", service: "Property Mutation Fee", amount: 2500, date: "Oct 12, 2024", method: "UPI", status: "Successful" },
+  { id: "TXN-88119770", citizen: "Priya Sharma", app: "MUT-2024-88112", service: "Record of Rights Fee", amount: 150, date: "Oct 15, 2024", method: "Card", status: "Successful" },
+  { id: "TXN-88115002", citizen: "Rajesh Kumar", app: "MUT-2024-8921A", service: "Property Tax (FY 23-24)", amount: 4850, date: "Sep 28, 2024", method: "Net Banking", status: "Successful" },
+  { id: "TXN-88109934", citizen: "Amit Patel", app: "EC-2024-03391", service: "Encumbrance Certificate Fee", amount: 350, date: "Sep 20, 2024", method: "UPI", status: "Pending" },
+  { id: "TXN-88107112", citizen: "Sunita Devi", app: "PTX-2024-01077", service: "Property Tax (FY 23-24)", amount: 3120, date: "Sep 12, 2024", method: "Card", status: "Failed" },
+  { id: "TXN-88106501", citizen: "Kavita Singh", app: "MUT-2024-88112", service: "Mutation Balance Fee", amount: 1750, date: "Sep 08, 2024", method: "UPI", status: "Successful" },
+  { id: "TXN-88104190", citizen: "Hari Singh", app: "ROR-2024-07712", service: "Record of Rights Fee", amount: 150, date: "Sep 02, 2024", method: "Net Banking", status: "Successful" }
+];
+
+/* =========================================================
+   GRIEVANCES (demo seeds; user bb_grievances merged in)
+   ========================================================= */
+
+export const GRIEVANCE_SEEDS = [
+  { ref: "GRV-2026-1001", citizen: "Amit Patel", subject: "Mutation delayed beyond expected date", department: "Revenue", date: "04 Sep 2026", priority: "High", status: "Open", officer: "Revenue Officer — District A" },
+  { ref: "GRV-2026-1002", citizen: "Sunita Devi", subject: "Tax receipt not reflecting after payment", department: "Municipal", date: "03 Sep 2026", priority: "Medium", status: "In Progress", officer: "Municipal Officer — ULB Central" },
+  { ref: "GRV-2026-1003", citizen: "Rahul Sharma", subject: "Boundary demarcation request", department: "Survey", date: "02 Sep 2026", priority: "Medium", status: "Open", officer: "Unassigned" },
+  { ref: "GRV-2026-1004", citizen: "Priya Verma", subject: "Document rejected incorrectly", department: "Registration", date: "01 Sep 2026", priority: "High", status: "In Progress", officer: "Registration Officer — District A" },
+  { ref: "GRV-2026-1005", citizen: "Kavita Singh", subject: "Incorrect land record entry", department: "Revenue", date: "28 Aug 2026", priority: "Low", status: "Resolved", officer: "Revenue Officer — District A" }
+];
+
+export function getGrievances() {
+  let user = [];
+  try {
+    user = JSON.parse(localStorage.getItem("bb_grievances") || "[]");
+  } catch {
+    user = [];
+  }
+  const mapped = user.map((g) => ({
+    ref: g.ref || "GRV-DEMO",
+    citizen: g.citizen || "Citizen Applicant",
+    subject: g.subject || `${g.category || "General"} grievance`,
+    department: g.department || "Revenue",
+    date: g.date || "—",
+    priority: g.priority || "Medium",
+    status: "Open",
+    officer: "Unassigned"
+  }));
+  return [...mapped, ...GRIEVANCE_SEEDS.map((g) => ({ ...g }))];
+}
+
+export function saveGrievancePatch(ref, patch) {
+  try {
+    const extra = JSON.parse(localStorage.getItem("bb_grievance_admin") || "{}");
+    extra[ref] = { ...(extra[ref] || {}), ...patch };
+    localStorage.setItem("bb_grievance_admin", JSON.stringify(extra));
+  } catch (e) {
+    console.warn("[Admin] Failed to persist grievance state:", e);
+  }
+}
+
+export function getGrievanceOverrides() {
+  try {
+    return JSON.parse(localStorage.getItem("bb_grievance_admin") || "{}");
+  } catch {
+    return {};
+  }
+}

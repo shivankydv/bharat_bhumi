@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
 
 /* Demo application data (backend has no application-tracking API — do not invent endpoints). */
 const DEMO_APPLICATION = {
@@ -159,8 +159,7 @@ function setupSession() {
 }
 
 function init() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
+  if (!requirePortal("citizen")) {
     return;
   }
   setupSession();

@@ -20,7 +20,8 @@
 import {
   isAuthenticated,
   getCurrentUser,
-  logout
+  logout,
+  requirePortal
 } from './services/auth-service.js';
 
 import { DEMO_PROPERTIES } from './demo-data.js';
@@ -74,16 +75,10 @@ export const SAMPLE_ACTIVITIES = [
 document.addEventListener('DOMContentLoaded', () => {
 
   // ----------------------------------------------------------
-  // 1. AUTHENTICATION GUARD
+  // 1. PORTAL GUARD (citizen-only page)
   // ----------------------------------------------------------
 
-  if (!isAuthenticated()) {
-
-    console.warn(
-      '[Dashboard Guard] Unauthenticated access attempt.'
-    );
-
-    window.location.href = 'login.html';
+  if (!requirePortal('citizen')) {
 
     return;
   }

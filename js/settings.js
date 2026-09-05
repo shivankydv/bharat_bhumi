@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, getSession, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, getSession, logout, requirePortal } from "./services/auth-service.js";
 
 /* Frontend-only persistence (no profile/settings API exists in backend — do not invent endpoints). */
 const PREF_KEY = "bb_settings_prefs";
@@ -315,8 +315,7 @@ function setupSession() {
 }
 
 function init() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
+  if (!requirePortal("citizen")) {
     return;
   }
   const prefs = loadPrefs();

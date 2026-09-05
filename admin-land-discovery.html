@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bharat Bhumi - Pending Applications (Admin)</title>
+  <title>Bharat Bhumi - Land Discovery Requests (Admin)</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,10 +24,10 @@
     @media (max-width: 768px) {
       .dashboard-main { margin-left: 0; width: 100%; }
       .dashboard-content { padding: 16px; }
-      .apps-table-wrap { display: none; }
-      .apps-cards { display: flex; flex-direction: column; gap: 12px; }
+      .ldr-table-wrap { display: none; }
+      .ldr-cards { display: flex; flex-direction: column; gap: 12px; }
     }
-    @media (min-width: 769px) { .apps-cards { display: none; } }
+    @media (min-width: 769px) { .ldr-cards { display: none; } }
     button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
   </style>
 </head>
@@ -76,12 +76,12 @@
         <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
         </a>
-        <a href="pending-applications.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
-          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">pending_actions</span><span>Pending Applications</span>
+        <a href="pending-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
           <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
         </a>
-        <a href="admin-land-discovery.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">travel_explore</span><span>Land Discovery Requests</span>
+        <a href="admin-land-discovery.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">travel_explore</span><span>Land Discovery Requests</span>
         </a>
         <a href="admin-properties.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">home_work</span><span>Property Records</span>
@@ -131,78 +131,62 @@
             <div class="flex flex-wrap items-center gap-2 mb-2">
               <span class="text-label-sm font-semibold text-on-surface-variant">Admin Portal</span>
               <span class="material-symbols-outlined text-[14px] text-secondary">chevron_right</span>
-              <span class="text-primary font-bold text-label-sm">Pending Applications</span>
+              <span class="text-primary font-bold text-label-sm">Land Discovery Requests</span>
               <span class="status-badge status-pending ml-1">DEMO DATA</span>
             </div>
-            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Pending Applications</h1>
-            <p class="text-body-md text-secondary mt-1">Review, verify and process citizen applications submitted for land and property services.</p>
+            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Land Discovery Requests</h1>
+            <p class="text-body-md text-secondary mt-1">Review citizen requests for locating land records when ownership or parcel details are unknown.</p>
           </div>
 
-          <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Pending Review</p>
-              <p id="sum-pending" class="text-3xl font-bold text-primary mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Documents Awaiting Verification</p>
-              <p id="sum-docs" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Requires Additional Information</p>
-              <p id="sum-info" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Recently Submitted</p>
-              <p id="sum-recent" class="text-3xl font-bold text-[#16A34A] mt-1">0</p>
-            </div>
+          <div class="grid grid-cols-2 xl:grid-cols-6 gap-4">
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Total Requests</p><p id="ldr-total" class="text-3xl font-bold text-primary mt-1">0</p></div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Pending Review</p><p id="ldr-pending" class="text-3xl font-bold text-[#EA580C] mt-1">0</p></div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Under Record Search</p><p id="ldr-searching" class="text-3xl font-bold text-primary mt-1">0</p></div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Additional Information</p><p id="ldr-info" class="text-3xl font-bold text-[#EA580C] mt-1">0</p></div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Possible Matches Found</p><p id="ldr-matches" class="text-3xl font-bold text-primary mt-1">0</p></div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5"><p class="text-label-sm font-semibold text-on-surface-variant">Resolved</p><p id="ldr-resolved" class="text-3xl font-bold text-[#16A34A] mt-1">0</p></div>
           </div>
 
           <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4">
-            <div class="flex flex-col xl:flex-row gap-3 xl:items-center">
+            <div class="flex flex-col md:flex-row gap-3 md:items-center">
               <div class="flex-1 relative min-w-[200px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="font-size:20px;">search</span>
-                <input type="text" id="app-search" placeholder="Search by ID, citizen, ULPIN, service..."
+                <input type="text" id="ldr-search" placeholder="Search by ID, citizen, location, owner..."
                   class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary">
               </div>
               <div class="flex items-center gap-2">
-                <label for="f-status" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Status:</label>
-                <select id="f-status" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                <label for="ldr-stage" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Status:</label>
+                <select id="ldr-stage" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
                   <option value="all">All</option>
-                  <option>Pending Review</option>
-                  <option>Under Verification</option>
-                  <option>Document Verification</option>
-                  <option>Documents Required</option>
-                  <option>Correction Required</option>
-                  <option>Submitted</option>
-                  <option>Approved</option>
-                  <option>Rejected</option>
-                  <option>Resolved</option>
-                  <option>Open</option>
-                  <option>Completed</option>
+                  <option>Submitted</option><option>Under Review</option><option>Record Search</option>
+                  <option>Possible Match Found</option><option>Officer Verification</option>
+                  <option>Additional Information Required</option><option>No Record Found</option>
+                  <option>Resolved</option><option>Rejected</option>
                 </select>
               </div>
               <div class="flex items-center gap-2">
-                <label for="f-service" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Service:</label>
-                <select id="f-service" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-                  <option value="all">All Services</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <label for="f-priority" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Priority:</label>
-                <select id="f-priority" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                <label for="ldr-district" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">District:</label>
+                <select id="ldr-district" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
                   <option value="all">All</option>
-                  <option>Normal</option>
-                  <option>High</option>
-                  <option>Urgent</option>
                 </select>
               </div>
               <div class="flex items-center gap-2">
-                <label for="f-date" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Date:</label>
-                <input type="date" id="f-date" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <label for="ldr-landtype" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Land Type:</label>
+                <select id="ldr-landtype" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                  <option>Agricultural</option><option>Residential</option><option>Commercial</option><option>Unknown</option>
+                </select>
               </div>
               <div class="flex items-center gap-2">
-                <label for="f-dept" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Dept:</label>
-                <select id="f-dept" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                <label for="ldr-priority" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Priority:</label>
+                <select id="ldr-priority" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                  <option>High</option><option>Medium</option><option>Low</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="ldr-assignee" class="text-label-sm font-semibold text-on-surface-variant whitespace-nowrap">Officer:</label>
+                <select id="ldr-assignee" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
                   <option value="all">All</option>
                 </select>
               </div>
@@ -212,35 +196,33 @@
             </div>
           </div>
 
-          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Applications">
+          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Discovery requests">
             <div class="px-6 py-4 border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-low">
-              <h2 class="text-xl font-bold text-on-surface">Applications</h2>
-              <span id="apps-count" class="text-sm font-medium text-secondary"></span>
+              <h2 class="text-xl font-bold text-on-surface">Requests</h2>
+              <span id="ldr-count" class="text-sm font-medium text-secondary"></span>
             </div>
-            <div class="apps-table-wrap overflow-x-auto">
+            <div class="ldr-table-wrap overflow-x-auto">
               <table class="w-full border-collapse text-left">
                 <thead>
                   <tr class="bg-surface-container-low border-b border-outline-variant/40 text-xs font-semibold text-secondary uppercase tracking-wider">
-                    <th class="px-6 py-4">Application ID</th>
-                    <th class="px-6 py-4">Citizen / Applicant</th>
-                    <th class="px-6 py-4">Service</th>
-                    <th class="px-6 py-4">ULPIN / Property</th>
+                    <th class="px-6 py-4">Request ID</th>
+                    <th class="px-6 py-4">Citizen</th>
+                    <th class="px-6 py-4">Possible Owner</th>
+                    <th class="px-6 py-4">Location</th>
+                    <th class="px-6 py-4">Land Type</th>
                     <th class="px-6 py-4">Submitted</th>
                     <th class="px-6 py-4">Current Stage</th>
-                    <th class="px-6 py-4">Documents</th>
                     <th class="px-6 py-4">Priority</th>
+                    <th class="px-6 py-4">Assigned Officer</th>
                     <th class="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody id="apps-tbody"></tbody>
+                <tbody id="ldr-tbody"></tbody>
               </table>
             </div>
-            <div class="apps-cards px-4 py-4" id="apps-cards"></div>
+            <div class="ldr-cards px-4 py-4" id="ldr-cards"></div>
             <div id="empty-state" class="hidden py-16 px-6 text-center">
-              <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-fixed/30 flex items-center justify-center">
-                <span class="material-symbols-outlined text-3xl text-primary">assignment</span>
-              </div>
-              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No applications found</h3>
+              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No requests found</h3>
               <p class="text-secondary max-w-md mx-auto">Try a different search or clear the filters.</p>
             </div>
           </section>
@@ -253,12 +235,12 @@
   <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
   <script>
     window.BB_NOTIF_ITEMS = [
+      { id: "adm-ldr1", kind: "info", icon: "travel_explore", color: "#002F6C", title: "Discovery Request", text: "New land discovery request LDR-2026-0001 needs review.", time: "25 min ago", href: "admin-ldr-review.html?id=LDR-2026-0001" },
       { id: "adm-124", kind: "info", icon: "assignment", color: "#002F6C", title: "New Application", text: "New application APP-2026-00124 requires review.", time: "10 min ago", href: "application-review.html?id=APP-2026-00124" },
-      { id: "adm-125", kind: "success", icon: "upload_file", color: "#16A34A", title: "Documents Uploaded", text: "Documents uploaded for APP-2026-00125.", time: "1 hour ago", href: "application-review.html?id=APP-2026-00125" },
       { id: "adm-126", kind: "warning", icon: "warning", color: "#EA580C", title: "Action Needed", text: "Application APP-2026-00126 requires additional documents.", time: "2 hours ago", href: "application-review.html?id=APP-2026-00126" }
     ];
   </script>
   <script src="js/notifications.js?v=20260905"></script>
-  <script type="module" src="js/pending-applications.js?v=20260905"></script>
+  <script type="module" src="js/admin-land-discovery.js?v=20260905"></script>
 </body>
 </html>

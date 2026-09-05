@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
 import {
   getApplication, saveApplicationPatch, prependHistory, pendingCount,
   DOC_TYPES, OFFICER_ROSTER, CHECKLIST_TEMPLATE, nowStamp, PROPERTIES_360
@@ -38,17 +38,7 @@ function toast(msg, isError) {
   el._t = setTimeout(() => el.classList.add("hidden"), 2600);
 }
 
-function requireAdmin() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
-    return false;
-  }
-  if (String(getCurrentUser()?.role || "USER").toUpperCase() !== "ADMIN") {
-    window.location.href = "dashboard.html";
-    return false;
-  }
-  return true;
-}
+// Admin guard lives in the shared auth service (requirePortal). See init().
 
 function stageBadge(stage) {
   const s = String(stage || "").toLowerCase();
@@ -560,12 +550,7 @@ function setupSession() {
 }
 
 function init() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
-    return;
-  }
-  if (String(getCurrentUser()?.role || "USER").toUpperCase() !== "ADMIN") {
-    window.location.href = "dashboard.html";
+  if (!requirePortal("admin")) {
     return;
   }
   let id = null;

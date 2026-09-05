@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bharat Bhumi - Application Review (Admin)</title>
+  <title>Bharat Bhumi - Land Discovery Review (Admin)</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,6 @@
     .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
     .modal-overlay { background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
     .field-error { color: #BA1A1A; font-size: 13px; margin-top: 4px; }
-    .dept-tab.active { background: #001b44; color: #ffffff; }
     @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
     @media (max-width: 768px) {
       .dashboard-main { margin-left: 0; width: 100%; }
@@ -76,12 +75,12 @@
         <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
         </a>
-        <a href="pending-applications.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
-          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">pending_actions</span><span>Pending Applications</span>
+        <a href="pending-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
           <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
         </a>
-        <a href="admin-land-discovery.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">travel_explore</span><span>Land Discovery Requests</span>
+        <a href="admin-land-discovery.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">travel_explore</span><span>Land Discovery Requests</span>
         </a>
         <a href="admin-properties.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">home_work</span><span>Property Records</span>
@@ -130,81 +129,82 @@
           <div>
             <nav aria-label="Breadcrumb" class="flex text-label-sm font-semibold text-on-surface-variant mb-2">
               <ol class="inline-flex items-center space-x-1 md:space-x-2">
-                <li><a class="hover:text-primary transition-colors" href="pending-applications.html">Pending Applications</a></li>
+                <li><a class="hover:text-primary transition-colors" href="admin-land-discovery.html">Land Discovery Requests</a></li>
                 <li><div class="flex items-center"><span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span><span class="text-on-surface">Review</span></div></li>
               </ol>
             </nav>
             <div class="flex flex-col md:flex-row md:items-end gap-3">
               <div>
-                <h1 class="text-headline-lg font-bold text-on-surface tracking-tight">Application Review</h1>
-                <p class="font-mono font-bold text-primary text-lg mt-1"><span id="rev-id">—</span> <span id="rev-stage" class="ml-2"></span></p>
+                <h1 class="text-headline-lg font-bold text-on-surface tracking-tight">Land Discovery Review</h1>
+                <p class="font-mono font-bold text-primary text-lg mt-1"><span id="ldr-id">—</span> <span id="ldr-stage" class="ml-2"></span></p>
               </div>
               <span class="status-badge status-pending md:ml-auto">DEMO DATA</span>
             </div>
           </div>
 
           <div id="review-missing" class="hidden bg-white rounded-xl border border-outline-variant/40 p-8 text-center">
-            <h2 class="text-xl font-bold">Application not found</h2>
-            <p class="text-sm text-secondary mt-1">The requested demo application does not exist.</p>
-            <a href="pending-applications.html" class="mt-4 inline-block px-5 py-2.5 bg-primary text-white rounded-lg font-semibold">Back to Pending Applications</a>
+            <h2 class="text-xl font-bold">Request not found</h2>
+            <p class="text-sm text-secondary mt-1">The requested discovery record does not exist.</p>
+            <a href="admin-land-discovery.html" class="mt-4 inline-block px-5 py-2.5 bg-primary text-white rounded-lg font-semibold">Back to Requests</a>
           </div>
 
           <div id="review-content" class="grid grid-cols-1 xl:grid-cols-12 gap-6">
             <div class="xl:col-span-8 flex flex-col gap-6">
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Applicant information">
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Applicant">
                 <h2 class="text-lg font-bold text-primary mb-3">Applicant Information</h2>
-                <div id="rev-applicant"></div>
+                <div id="ldr-applicant"></div>
               </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Property information">
-                <h2 class="text-lg font-bold text-primary mb-3">Property Information</h2>
-                <div id="rev-property"></div>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Known land">
+                <h2 class="text-lg font-bold text-primary mb-3">Known Land Information</h2>
+                <div id="ldr-clues"></div>
               </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Application information">
-                <h2 class="text-lg font-bold text-primary mb-3">Application Information</h2>
-                <div id="rev-appinfo"></div>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Claim">
+                <h2 class="text-lg font-bold text-primary mb-3">Claim Details</h2>
+                <div id="ldr-claim"></div>
               </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Submitted documents">
-                <div class="flex items-center justify-between mb-3">
-                  <h2 class="text-lg font-bold text-primary">Submitted Documents</h2>
-                  <span id="docs-summary" class="text-sm text-secondary"></span>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Documents">
+                <h2 class="text-lg font-bold text-primary mb-3">Documents / Evidence</h2>
+                <div id="ldr-docs"></div>
+              </section>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Search results">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                  <h2 class="text-lg font-bold text-primary">Search Results &amp; Possible Matches</h2>
+                  <button id="btn-no-match" class="text-xs font-semibold text-on-surface-variant hover:text-error border border-outline-variant rounded-lg px-3 py-1.5 transition">Mark No Record Found</button>
                 </div>
-                <div id="rev-docs" class="flex flex-col gap-3"></div>
+                <p class="text-xs text-secondary mb-3">Potential matches are leads only — matching information never confirms ownership. Verification is an authority decision.</p>
+                <div id="ldr-matches" class="flex flex-col gap-3"></div>
               </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Verification checklist">
-                <div class="flex items-center justify-between mb-1">
-                  <h2 class="text-lg font-bold text-primary">Verification Checklist</h2>
-                  <span id="check-count" class="text-sm font-bold text-secondary"></span>
-                </div>
-                <div class="w-full bg-surface-variant rounded-full h-2 mb-3">
-                  <div id="check-bar" class="bg-[#16A34A] h-2 rounded-full transition-all" style="width:0%"></div>
-                </div>
-                <div class="text-sm font-semibold text-secondary mb-2">Verification Progress</div>
-                <div id="rev-checklist" class="flex flex-col gap-2"></div>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Department workflow">
+                <h2 class="text-lg font-bold text-primary mb-1">Department Workflow</h2>
+                <p class="text-xs text-secondary mb-3">Revenue → Survey / GIS → Registration → Municipal → Officer review → Authority decision.</p>
+                <div id="ldr-workflow" class="flex flex-col gap-1"></div>
               </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Department information">
-                <div class="p-5 md:p-6 pb-0">
-                  <h2 class="text-lg font-bold text-primary mb-1">Property / Department Information</h2>
-                  <p class="text-xs text-secondary mb-3">Demo records grouped by department for the application ULPIN.</p>
+              <section id="norecord-panel" class="hidden rounded-xl border-2 border-error/40 bg-white shadow-sm p-5 md:p-6" aria-label="No record found">
+                <h2 class="text-lg font-bold text-error mb-1">No Matching Land Record Found</h2>
+                <p class="text-sm text-secondary">No matching land record was identified using the information currently available. The request stays open — choose a next step:</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <button id="btn-nr-info" class="px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold">Add More Information</button>
+                  <button id="btn-nr-survey" class="px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold">Request Survey Assistance</button>
+                  <button id="btn-nr-history" class="px-4 py-2 rounded-lg border border-outline-variant text-sm font-semibold">View Search History</button>
+                  <button id="btn-nr-support" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Contact Support</button>
                 </div>
-                <div id="dept-tabs" class="flex gap-1 px-4 border-b border-outline-variant/40 overflow-x-auto bg-surface-container-low"></div>
-                <div id="dept-panel" class="p-5 md:p-6"></div>
+              </section>
+              <section id="resolution-panel" class="hidden bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Resolution">
+                <h2 class="text-lg font-bold text-primary mb-3">Resolution</h2>
+                <div id="ldr-resolution"></div>
               </section>
               <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Timeline">
-                <h2 class="text-lg font-bold text-primary mb-3">Application Activity Timeline</h2>
-                <div id="rev-timeline" class="flex flex-col"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Internal notes">
-                <h2 class="text-lg font-bold text-primary mb-1">Internal Notes <span class="text-xs font-semibold text-[#936b00] bg-[#fdf3c7] px-2 py-0.5 rounded ml-1">Officers only</span></h2>
-                <div id="rev-notes" class="flex flex-col gap-2 mt-3"></div>
+                <h2 class="text-lg font-bold text-primary mb-3">Activity Timeline</h2>
+                <div id="ldr-timeline" class="flex flex-col"></div>
               </section>
             </div>
 
             <div class="xl:col-span-4 flex flex-col gap-6">
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 xl:sticky xl:top-20" aria-label="Admin actions">
-                <h2 class="text-lg font-bold text-on-surface mb-1">Decision &amp; Actions</h2>
-                <p class="text-xs text-secondary mb-1">Assigned: <span id="rev-assignee" class="font-semibold text-on-surface">—</span></p>
-                <p class="text-xs text-secondary mb-3">Expected: <span id="rev-expected" class="font-semibold text-on-surface">—</span></p>
-                <div id="review-actions" class="grid grid-cols-1 gap-2"></div>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 xl:sticky xl:top-20" aria-label="Officer actions">
+                <h2 class="text-lg font-bold text-on-surface mb-1">Officer Actions</h2>
+                <p class="text-xs text-secondary mb-1">Department: <span id="ldr-dept" class="font-semibold text-on-surface">—</span></p>
+                <p class="text-xs text-secondary mb-3">Priority: <span id="ldr-priority" class="font-semibold text-on-surface">—</span></p>
+                <div id="ldr-actions" class="grid grid-cols-1 gap-2"></div>
               </section>
             </div>
           </div>
@@ -214,93 +214,37 @@
     </main>
   </div>
 
-  <div id="doc-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
-        <h3 id="doc-title" class="text-xl font-bold text-on-surface"></h3>
-        <button id="doc-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div id="doc-body" class="p-5 overflow-y-auto"></div>
-      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-2">
-        <button id="doc-reject-btn" class="px-4 py-2 rounded-md border border-error/60 text-error text-sm font-semibold hover:bg-red-50 transition">Reject Document</button>
-        <button id="doc-verify-btn" class="px-4 py-2 rounded-md bg-primary text-white text-sm font-semibold hover:bg-primary-container transition">Verify Document</button>
-        <button id="doc-close-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="docreject-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
-        <h3 class="text-xl font-bold text-on-surface">Reject Document</h3>
-        <button id="docreject-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="p-5 flex flex-col gap-3">
-        <p class="text-sm text-secondary">Document: <span id="docreject-name" class="font-semibold text-on-surface"></span></p>
-        <label for="docreject-reason" class="block text-label-sm font-semibold text-on-surface-variant">REASON *</label>
-        <textarea id="docreject-reason" rows="3" placeholder="e.g. Illegible scan — re-upload a clear copy" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-        <p id="docreject-error" class="field-error hidden"></p>
-      </div>
-      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3">
-        <button id="docreject-cancel" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
-        <button id="btn-docreject-confirm" class="px-4 py-2 bg-error text-white rounded-md text-sm font-semibold hover:opacity-90 transition">Reject Document</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="action-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
+  <div id="act-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
       <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
-        <h3 id="action-title" class="text-xl font-bold text-on-surface">Officer Action</h3>
-        <button id="action-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+        <h3 id="act-title" class="text-xl font-bold text-on-surface">Officer Action</h3>
+        <button id="act-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
       </div>
       <div class="p-5 overflow-y-auto flex flex-col gap-4">
-        <p id="action-desc" class="text-sm text-secondary"></p>
-        <div id="action-approve-info" class="hidden rounded-lg border border-outline-variant/50 bg-surface-container-low p-3 text-sm"></div>
-        <div id="action-docs-wrap" class="hidden">
-          <p class="text-label-sm font-semibold text-on-surface-variant mb-2">SELECT REQUIRED DOCUMENTS *</p>
-          <div id="action-docs-list" class="flex flex-col gap-2"></div>
-          <label for="action-msg" class="block text-label-sm font-semibold text-on-surface-variant mt-3 mb-1">ADDITIONAL MESSAGE</label>
-          <textarea id="action-msg" rows="2" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-        </div>
-        <div id="action-field-wrap" class="hidden">
-          <label for="action-field" class="block text-label-sm font-semibold text-on-surface-variant mb-1">FIELD / SECTION *</label>
-          <select id="action-field" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-            <option>Property Details</option><option>Applicant Details</option><option>Documents</option><option>Other</option>
-          </select>
-        </div>
-        <div id="action-resolve-wrap" class="hidden">
-          <label for="action-resolution" class="block text-label-sm font-semibold text-on-surface-variant mb-1">RESOLUTION *</label>
-          <select id="action-resolution" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-            <option>Approved</option><option>Rejected</option><option>Other</option>
-          </select>
-        </div>
-        <div id="action-officer-wrap" class="hidden">
-          <label for="action-officer" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ASSIGN TO OFFICER *</label>
-          <select id="action-officer" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"></select>
-        </div>
+        <p id="act-desc" class="text-sm text-secondary"></p>
+        <div id="act-dynamic"></div>
         <div id="action-input-wrap">
           <label id="action-input-label" for="action-input" class="block text-label-sm font-semibold text-on-surface-variant mb-1">REASON / COMMENT *</label>
           <textarea id="action-input" rows="3" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
         </div>
-        <p id="action-error" class="field-error hidden"></p>
+        <p id="act-error" class="field-error hidden"></p>
       </div>
       <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3">
-        <button id="action-cancel-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
-        <button id="btn-action-confirm" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Confirm</button>
+        <button id="act-cancel" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
+        <button id="btn-act-confirm" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Confirm</button>
       </div>
     </div>
   </div>
 
-  <div id="review-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[120] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+  <div id="ldr-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[120] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
   <script>
     window.BB_NOTIF_ITEMS = [
+      { id: "adm-ldr1", kind: "info", icon: "travel_explore", color: "#002F6C", title: "Discovery Request", text: "New land discovery request LDR-2026-0001 needs review.", time: "25 min ago", href: "admin-ldr-review.html?id=LDR-2026-0001" },
       { id: "adm-124", kind: "info", icon: "assignment", color: "#002F6C", title: "New Application", text: "New application APP-2026-00124 requires review.", time: "10 min ago", href: "application-review.html?id=APP-2026-00124" },
-      { id: "adm-125", kind: "success", icon: "upload_file", color: "#16A34A", title: "Documents Uploaded", text: "Documents uploaded for APP-2026-00125.", time: "1 hour ago", href: "application-review.html?id=APP-2026-00125" },
       { id: "adm-126", kind: "warning", icon: "warning", color: "#EA580C", title: "Action Needed", text: "Application APP-2026-00126 requires additional documents.", time: "2 hours ago", href: "application-review.html?id=APP-2026-00126" }
     ];
   </script>
   <script src="js/notifications.js?v=20260905"></script>
-  <script type="module" src="js/application-review.js?v=20260905"></script>
+  <script type="module" src="js/admin-ldr-review.js?v=20260905"></script>
 </body>
 </html>

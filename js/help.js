@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
 import { SERVICES } from "./services.js";
 
 /* Frontend demo help content (no help/ticket API exists in backend — do not invent endpoints). */
@@ -353,8 +353,7 @@ function setupSession() {
 }
 
 function init() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
+  if (!requirePortal("citizen")) {
     return;
   }
   setupSession();

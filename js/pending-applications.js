@@ -1,18 +1,10 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
 import { getApplications, pendingCount } from "./admin-data.js";
 
 const $ = (id) => document.getElementById(id);
 
 function requireAdmin() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
-    return false;
-  }
-  if (String(getCurrentUser()?.role || "USER").toUpperCase() !== "ADMIN") {
-    window.location.href = "dashboard.html";
-    return false;
-  }
-  return true;
+  return requirePortal("admin");
 }
 
 function stageBadge(stage) {

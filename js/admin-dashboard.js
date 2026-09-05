@@ -1,5 +1,5 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
-import { WORKFLOW_STAGES, CROSS_DEPT_FLOW, DEPT_OVERVIEW, DEPARTMENTS, REVIEW_QUEUE, pendingApplications, pendingCount } from "./admin-data.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
+import { WORKFLOW_STAGES, CROSS_DEPT_FLOW, DEPT_OVERVIEW, DEPARTMENTS, REVIEW_QUEUE, pendingApplications, pendingCount, ADMIN_DASH_STATS, VERIFICATION_ACTIVITY } from "./admin-data.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -18,6 +18,36 @@ function stageBadge(stage) {
     : /reject|fail/.test(s) ? "status-rejected"
     : /submit|review|pending|open|document/.test(s) ? "status-pending" : "status-neutral";
   return `<span class="status-badge ${cls}">${stage}</span>`;
+}
+
+function renderStats() {
+  const box = $("dash-stats");
+  if (!box) return;
+  box.innerHTML = ADMIN_DASH_STATS.map((s) => `
+    <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-lg bg-primary-fixed/30 text-primary flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">${s.icon}</span>
+        </div>
+        <p class="text-label-sm font-semibold text-on-surface-variant">${s.label}</p>
+      </div>
+      <p class="text-3xl font-bold text-on-surface mt-2">${s.value}</p>
+      <p class="text-xs text-secondary mt-0.5">Demo figures only</p>
+    </div>`).join("");
+  const feed = $("verify-activity");
+  if (feed) {
+    feed.innerHTML = VERIFICATION_ACTIVITY.map((a) => `
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center">
+          <div class="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 flex-shrink-0"></div>
+          <div class="w-0.5 flex-1 bg-outline-variant/60"></div>
+        </div>
+        <div class="pb-3">
+          <p class="text-xs font-semibold text-secondary">${a.time}</p>
+          <p class="text-sm text-on-surface">${a.text}</p>
+        </div>
+      </div>`).join("");
+  }
 }
 
 function renderWorkflow() {
@@ -155,25 +185,12 @@ function setupSession() {
   if ($("btn-sidebar-logout")) $("btn-sidebar-logout").addEventListener("click", doLogout);
 }
 
-// Frontend role guard: ADMIN-only pages. The backend still enforces
-// authorization on every endpoint; this only routes the UI correctly.
-function requireAdmin() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
-    return false;
-  }
-  if (String(getCurrentUser()?.role || "USER").toUpperCase() !== "ADMIN") {
-    window.location.href = "dashboard.html";
-    return false;
-  }
-  return true;
-}
-
 function init() {
-  if (!requireAdmin()) {
+  if (!requirePortal("admin")) {
     return;
   }
   setupSession();
+  renderStats();
   renderWorkflow();
   renderOverview();
   renderQueue();

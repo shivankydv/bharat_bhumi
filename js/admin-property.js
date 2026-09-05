@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requirePortal } from "./services/auth-service.js";
 import { WORKFLOW_STAGES, PROPERTIES_360, seedActivities, pendingCount } from "./admin-data.js";
 
 const STORE_KEY = "bb_admin_state";
@@ -415,22 +415,8 @@ function setupSession() {
   if ($("btn-sidebar-logout")) $("btn-sidebar-logout").addEventListener("click", doLogout);
 }
 
-// Frontend role guard: ADMIN-only pages. The backend still enforces
-// authorization on every endpoint; this only routes the UI correctly.
-function requireAdmin() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
-    return false;
-  }
-  if (String(getCurrentUser()?.role || "USER").toUpperCase() !== "ADMIN") {
-    window.location.href = "dashboard.html";
-    return false;
-  }
-  return true;
-}
-
 function init() {
-  if (!requireAdmin()) {
+  if (!requirePortal("admin")) {
     return;
   }
   setupSession();

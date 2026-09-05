@@ -114,3 +114,90 @@ export function logout(redirectUrl = 'login.html') {
   // Redirect to specified login page
   window.location.href = redirectUrl;
 }
+
+/**
+ * Returns the authenticated role in uppercase, or null when logged out.
+ * The session role (written by login() from the backend response) is the
+ * single source of truth — never inferred from URL, username, or page.
+ */
+export function getRole() {
+  const session = getSession();
+  return session && session.role ? String(session.role).toUpperCase() : null;
+}
+
+/**
+ * Portal home for a role: ADMIN officers use the Admin Portal,
+ * everyone else uses the citizen dashboard.
+ */
+export function portalHomeForRole(role) {
+  return String(role || '').toUpperCase() === 'ADMIN' ? 'admin-dashboard.html' : 'dashboard.html';
+}
+
+function currentFile() {
+  try {
+    return window.location.pathname.split('/').pop().toLowerCase().split('?')[0];
+  } catch (error) {
+    return '';
+  }
+}
+
+function go(target) {
+  // Never redirect to the page we are already on (prevents guard loops).
+  try {
+    if (currentFile() !== String(target).toLowerCase()) {
+      window.location.href = target;
+    }
+  } catch (error) {
+    /* non-browser environment (tests) */
+  }
+}
+
+/**
+ * Central portal guard for protected pages.
+ *
+ * kind "admin"   → role must be ADMIN (wrong role goes to citizen dashboard)
+ * kind "citizen" → role must be USER (wrong role goes to the Admin Portal)
+ * kind "any"     → shared pages (e.g. GIS Explorer): any authenticated role
+ *
+ * Logged-out users always go to login.html. Public pages (index/login)
+ * must NOT call this. Also re-checks on bfcache restore so browser
+ * Back/Forward after logout cannot expose a cached protected page.
+ *
+ * Frontend routing only — backend authorization is unchanged and authoritative.
+ */
+export function requirePortal(kind) {
+  const check = () => {
+    if (!isAuthenticated()) {
+      go('login.html');
+      return false;
+    }
+    const role = getRole();
+    if (kind === 'admin' && role !== 'ADMIN') {
+      go('dashboard.html');
+      return false;
+    }
+    if (kind === 'citizen' && role !== 'USER') {
+      go('admin-dashboard.html');
+      return false;
+    }
+    return true;
+  };
+  const ok = check();
+  try {
+    window.addEventListener('pageshow', (event) => {
+      if (event && event.persisted) {
+        check();
+      }
+    });
+  } catch (error) {
+    /* non-browser environment (tests) */
+  }
+  return ok;
+}
+
+/**
+ * Auth-only guard for pages shared by both portals (no role routing).
+ */
+export function requireAuth() {
+  return requirePortal('any');
+}

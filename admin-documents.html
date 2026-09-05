@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bharat Bhumi - Application Review (Admin)</title>
+  <title>Bharat Bhumi - Document Verification (Admin)</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,13 +22,15 @@
     .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
     .modal-overlay { background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
     .field-error { color: #BA1A1A; font-size: 13px; margin-top: 4px; }
-    .dept-tab.active { background: #001b44; color: #ffffff; }
     @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
     @media (max-width: 768px) {
       .dashboard-main { margin-left: 0; width: 100%; }
       .dashboard-content { padding: 16px; }
+      .docs-table-wrap { display: none; }
+      .docs-cards { display: flex; flex-direction: column; gap: 12px; }
     }
-    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
+    @media (min-width: 769px) { .docs-cards { display: none; } }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
   </style>
 </head>
 <body class="bg-background text-on-surface antialiased">
@@ -76,8 +78,8 @@
         <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
         </a>
-        <a href="pending-applications.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
-          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">pending_actions</span><span>Pending Applications</span>
+        <a href="pending-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
           <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
         </a>
         <a href="admin-land-discovery.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
@@ -89,17 +91,14 @@
         <a href="admin-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">assignment</span><span>Applications</span>
         </a>
-        <a href="admin-documents.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">fact_check</span><span>Document Verification</span>
+        <a href="admin-documents.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">fact_check</span><span>Document Verification</span>
         </a>
         <a href="admin-payments.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">payments</span><span>Payments</span>
         </a>
         <a href="admin-users.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">group</span><span>Users / Citizens</span>
-        </a>
-        <a href="admin-property.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">360</span><span>Property 360°</span>
         </a>
         <a href="gis-explorer.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">map</span><span>GIS Explorer</span>
@@ -128,86 +127,67 @@
       <div class="dashboard-content">
         <div class="w-full max-w-[1280px] mx-auto flex flex-col gap-6">
           <div>
-            <nav aria-label="Breadcrumb" class="flex text-label-sm font-semibold text-on-surface-variant mb-2">
-              <ol class="inline-flex items-center space-x-1 md:space-x-2">
-                <li><a class="hover:text-primary transition-colors" href="pending-applications.html">Pending Applications</a></li>
-                <li><div class="flex items-center"><span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span><span class="text-on-surface">Review</span></div></li>
-              </ol>
-            </nav>
-            <div class="flex flex-col md:flex-row md:items-end gap-3">
-              <div>
-                <h1 class="text-headline-lg font-bold text-on-surface tracking-tight">Application Review</h1>
-                <p class="font-mono font-bold text-primary text-lg mt-1"><span id="rev-id">—</span> <span id="rev-stage" class="ml-2"></span></p>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="text-label-sm font-semibold text-on-surface-variant">Admin Portal</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary">chevron_right</span>
+              <span class="text-primary font-bold text-label-sm">Document Verification</span>
+              <span class="status-badge status-pending ml-1">DEMO DATA</span>
+            </div>
+            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Document Verification</h1>
+            <p class="text-body-md text-secondary mt-1">Verify citizen-submitted documents across all applications.</p>
+          </div>
+
+          <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4">
+            <div class="flex flex-col md:flex-row gap-3 md:items-center">
+              <div class="flex-1 relative min-w-[200px]">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="font-size:20px;">search</span>
+                <input type="text" id="doc-search" placeholder="Search by document, citizen, application, ULPIN..."
+                  class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary">
               </div>
-              <span class="status-badge status-pending md:ml-auto">DEMO DATA</span>
+              <div class="flex items-center gap-2">
+                <label for="f-status" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Status:</label>
+                <select id="f-status" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                  <option>Pending Verification</option>
+                  <option>Verified</option>
+                  <option>Rejected</option>
+                  <option>Missing</option>
+                </select>
+              </div>
+              <button id="btn-clear-filters" class="px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition text-sm font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>Clear Filters
+              </button>
             </div>
           </div>
 
-          <div id="review-missing" class="hidden bg-white rounded-xl border border-outline-variant/40 p-8 text-center">
-            <h2 class="text-xl font-bold">Application not found</h2>
-            <p class="text-sm text-secondary mt-1">The requested demo application does not exist.</p>
-            <a href="pending-applications.html" class="mt-4 inline-block px-5 py-2.5 bg-primary text-white rounded-lg font-semibold">Back to Pending Applications</a>
-          </div>
-
-          <div id="review-content" class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-            <div class="xl:col-span-8 flex flex-col gap-6">
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Applicant information">
-                <h2 class="text-lg font-bold text-primary mb-3">Applicant Information</h2>
-                <div id="rev-applicant"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Property information">
-                <h2 class="text-lg font-bold text-primary mb-3">Property Information</h2>
-                <div id="rev-property"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Application information">
-                <h2 class="text-lg font-bold text-primary mb-3">Application Information</h2>
-                <div id="rev-appinfo"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Submitted documents">
-                <div class="flex items-center justify-between mb-3">
-                  <h2 class="text-lg font-bold text-primary">Submitted Documents</h2>
-                  <span id="docs-summary" class="text-sm text-secondary"></span>
-                </div>
-                <div id="rev-docs" class="flex flex-col gap-3"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Verification checklist">
-                <div class="flex items-center justify-between mb-1">
-                  <h2 class="text-lg font-bold text-primary">Verification Checklist</h2>
-                  <span id="check-count" class="text-sm font-bold text-secondary"></span>
-                </div>
-                <div class="w-full bg-surface-variant rounded-full h-2 mb-3">
-                  <div id="check-bar" class="bg-[#16A34A] h-2 rounded-full transition-all" style="width:0%"></div>
-                </div>
-                <div class="text-sm font-semibold text-secondary mb-2">Verification Progress</div>
-                <div id="rev-checklist" class="flex flex-col gap-2"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Department information">
-                <div class="p-5 md:p-6 pb-0">
-                  <h2 class="text-lg font-bold text-primary mb-1">Property / Department Information</h2>
-                  <p class="text-xs text-secondary mb-3">Demo records grouped by department for the application ULPIN.</p>
-                </div>
-                <div id="dept-tabs" class="flex gap-1 px-4 border-b border-outline-variant/40 overflow-x-auto bg-surface-container-low"></div>
-                <div id="dept-panel" class="p-5 md:p-6"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Timeline">
-                <h2 class="text-lg font-bold text-primary mb-3">Application Activity Timeline</h2>
-                <div id="rev-timeline" class="flex flex-col"></div>
-              </section>
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 md:p-6" aria-label="Internal notes">
-                <h2 class="text-lg font-bold text-primary mb-1">Internal Notes <span class="text-xs font-semibold text-[#936b00] bg-[#fdf3c7] px-2 py-0.5 rounded ml-1">Officers only</span></h2>
-                <div id="rev-notes" class="flex flex-col gap-2 mt-3"></div>
-              </section>
+          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Documents">
+            <div class="px-6 py-4 border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-low">
+              <h2 class="text-xl font-bold text-on-surface">Submitted Documents</h2>
+              <span id="docs-count" class="text-sm font-medium text-secondary"></span>
             </div>
-
-            <div class="xl:col-span-4 flex flex-col gap-6">
-              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5 xl:sticky xl:top-20" aria-label="Admin actions">
-                <h2 class="text-lg font-bold text-on-surface mb-1">Decision &amp; Actions</h2>
-                <p class="text-xs text-secondary mb-1">Assigned: <span id="rev-assignee" class="font-semibold text-on-surface">—</span></p>
-                <p class="text-xs text-secondary mb-3">Expected: <span id="rev-expected" class="font-semibold text-on-surface">—</span></p>
-                <div id="review-actions" class="grid grid-cols-1 gap-2"></div>
-              </section>
+            <div class="docs-table-wrap overflow-x-auto">
+              <table class="w-full border-collapse text-left">
+                <thead>
+                  <tr class="bg-surface-container-low border-b border-outline-variant/40 text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th class="px-6 py-4">Document Name</th>
+                    <th class="px-6 py-4">Citizen</th>
+                    <th class="px-6 py-4">Application ID</th>
+                    <th class="px-6 py-4">ULPIN</th>
+                    <th class="px-6 py-4">Type</th>
+                    <th class="px-6 py-4">Uploaded</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="docs-tbody"></tbody>
+              </table>
             </div>
-          </div>
+            <div class="docs-cards px-4 py-4" id="docs-cards"></div>
+            <div id="empty-state" class="hidden py-16 px-6 text-center">
+              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No documents found</h3>
+              <p class="text-secondary max-w-md mx-auto">Try a different search or clear the filters.</p>
+            </div>
+          </section>
         </div>
         <div class="h-10"></div>
       </div>
@@ -238,7 +218,7 @@
       <div class="p-5 flex flex-col gap-3">
         <p class="text-sm text-secondary">Document: <span id="docreject-name" class="font-semibold text-on-surface"></span></p>
         <label for="docreject-reason" class="block text-label-sm font-semibold text-on-surface-variant">REASON *</label>
-        <textarea id="docreject-reason" rows="3" placeholder="e.g. Illegible scan — re-upload a clear copy" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        <textarea id="docreject-reason" rows="3" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
         <p id="docreject-error" class="field-error hidden"></p>
       </div>
       <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3">
@@ -248,51 +228,7 @@
     </div>
   </div>
 
-  <div id="action-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
-        <h3 id="action-title" class="text-xl font-bold text-on-surface">Officer Action</h3>
-        <button id="action-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="p-5 overflow-y-auto flex flex-col gap-4">
-        <p id="action-desc" class="text-sm text-secondary"></p>
-        <div id="action-approve-info" class="hidden rounded-lg border border-outline-variant/50 bg-surface-container-low p-3 text-sm"></div>
-        <div id="action-docs-wrap" class="hidden">
-          <p class="text-label-sm font-semibold text-on-surface-variant mb-2">SELECT REQUIRED DOCUMENTS *</p>
-          <div id="action-docs-list" class="flex flex-col gap-2"></div>
-          <label for="action-msg" class="block text-label-sm font-semibold text-on-surface-variant mt-3 mb-1">ADDITIONAL MESSAGE</label>
-          <textarea id="action-msg" rows="2" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-        </div>
-        <div id="action-field-wrap" class="hidden">
-          <label for="action-field" class="block text-label-sm font-semibold text-on-surface-variant mb-1">FIELD / SECTION *</label>
-          <select id="action-field" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-            <option>Property Details</option><option>Applicant Details</option><option>Documents</option><option>Other</option>
-          </select>
-        </div>
-        <div id="action-resolve-wrap" class="hidden">
-          <label for="action-resolution" class="block text-label-sm font-semibold text-on-surface-variant mb-1">RESOLUTION *</label>
-          <select id="action-resolution" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-            <option>Approved</option><option>Rejected</option><option>Other</option>
-          </select>
-        </div>
-        <div id="action-officer-wrap" class="hidden">
-          <label for="action-officer" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ASSIGN TO OFFICER *</label>
-          <select id="action-officer" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"></select>
-        </div>
-        <div id="action-input-wrap">
-          <label id="action-input-label" for="action-input" class="block text-label-sm font-semibold text-on-surface-variant mb-1">REASON / COMMENT *</label>
-          <textarea id="action-input" rows="3" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
-        </div>
-        <p id="action-error" class="field-error hidden"></p>
-      </div>
-      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3">
-        <button id="action-cancel-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
-        <button id="btn-action-confirm" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Confirm</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="review-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[120] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+  <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[120] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
   <script>
     window.BB_NOTIF_ITEMS = [
       { id: "adm-124", kind: "info", icon: "assignment", color: "#002F6C", title: "New Application", text: "New application APP-2026-00124 requires review.", time: "10 min ago", href: "application-review.html?id=APP-2026-00124" },
@@ -301,6 +237,6 @@
     ];
   </script>
   <script src="js/notifications.js?v=20260905"></script>
-  <script type="module" src="js/application-review.js?v=20260905"></script>
+  <script type="module" src="js/admin-documents.js?v=20260905"></script>
 </body>
 </html>

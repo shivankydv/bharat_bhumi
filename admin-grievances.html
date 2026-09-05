@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bharat Bhumi - Pending Applications (Admin)</title>
+  <title>Bharat Bhumi - Grievances (Admin)</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,14 +20,15 @@
     .status-rejected { background: rgba(186,26,26,.10); color: #BA1A1A; }
     .status-neutral { background: rgba(92,95,97,.12); color: #434750; }
     .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+    .modal-overlay { background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
     @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
     @media (max-width: 768px) {
       .dashboard-main { margin-left: 0; width: 100%; }
       .dashboard-content { padding: 16px; }
-      .apps-table-wrap { display: none; }
-      .apps-cards { display: flex; flex-direction: column; gap: 12px; }
+      .gr-table-wrap { display: none; }
+      .gr-cards { display: flex; flex-direction: column; gap: 12px; }
     }
-    @media (min-width: 769px) { .apps-cards { display: none; } }
+    @media (min-width: 769px) { .gr-cards { display: none; } }
     button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
   </style>
 </head>
@@ -76,8 +77,8 @@
         <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
         </a>
-        <a href="pending-applications.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
-          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">pending_actions</span><span>Pending Applications</span>
+        <a href="pending-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
           <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
         </a>
         <a href="admin-land-discovery.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
@@ -98,17 +99,14 @@
         <a href="admin-users.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">group</span><span>Users / Citizens</span>
         </a>
-        <a href="admin-property.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">360</span><span>Property 360°</span>
-        </a>
         <a href="gis-explorer.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">map</span><span>GIS Explorer</span>
         </a>
         <a href="admin-reports.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">bar_chart</span><span>Reports</span>
         </a>
-        <a href="admin-grievances.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">feedback</span><span>Grievances</span>
+        <a href="admin-grievances.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">feedback</span><span>Grievances</span>
         </a>
         <a href="admin-settings.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">settings</span><span>Settings</span>
@@ -131,79 +129,27 @@
             <div class="flex flex-wrap items-center gap-2 mb-2">
               <span class="text-label-sm font-semibold text-on-surface-variant">Admin Portal</span>
               <span class="material-symbols-outlined text-[14px] text-secondary">chevron_right</span>
-              <span class="text-primary font-bold text-label-sm">Pending Applications</span>
+              <span class="text-primary font-bold text-label-sm">Grievances</span>
               <span class="status-badge status-pending ml-1">DEMO DATA</span>
             </div>
-            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Pending Applications</h1>
-            <p class="text-body-md text-secondary mt-1">Review, verify and process citizen applications submitted for land and property services.</p>
-          </div>
-
-          <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Pending Review</p>
-              <p id="sum-pending" class="text-3xl font-bold text-primary mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Documents Awaiting Verification</p>
-              <p id="sum-docs" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Requires Additional Information</p>
-              <p id="sum-info" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
-            </div>
-            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
-              <p class="text-label-sm font-semibold text-on-surface-variant">Recently Submitted</p>
-              <p id="sum-recent" class="text-3xl font-bold text-[#16A34A] mt-1">0</p>
-            </div>
+            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Grievances</h1>
+            <p class="text-body-md text-secondary mt-1">Citizen complaints and requests requiring officer action.</p>
           </div>
 
           <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4">
-            <div class="flex flex-col xl:flex-row gap-3 xl:items-center">
+            <div class="flex flex-col md:flex-row gap-3 md:items-center">
               <div class="flex-1 relative min-w-[200px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="font-size:20px;">search</span>
-                <input type="text" id="app-search" placeholder="Search by ID, citizen, ULPIN, service..."
+                <input type="text" id="gr-search" placeholder="Search by reference, citizen, subject..."
                   class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary">
               </div>
               <div class="flex items-center gap-2">
                 <label for="f-status" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Status:</label>
                 <select id="f-status" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
                   <option value="all">All</option>
-                  <option>Pending Review</option>
-                  <option>Under Verification</option>
-                  <option>Document Verification</option>
-                  <option>Documents Required</option>
-                  <option>Correction Required</option>
-                  <option>Submitted</option>
-                  <option>Approved</option>
-                  <option>Rejected</option>
-                  <option>Resolved</option>
                   <option>Open</option>
-                  <option>Completed</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <label for="f-service" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Service:</label>
-                <select id="f-service" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-                  <option value="all">All Services</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <label for="f-priority" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Priority:</label>
-                <select id="f-priority" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-                  <option value="all">All</option>
-                  <option>Normal</option>
-                  <option>High</option>
-                  <option>Urgent</option>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <label for="f-date" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Date:</label>
-                <input type="date" id="f-date" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-              </div>
-              <div class="flex items-center gap-2">
-                <label for="f-dept" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Dept:</label>
-                <select id="f-dept" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
-                  <option value="all">All</option>
+                  <option>In Progress</option>
+                  <option>Resolved</option>
                 </select>
               </div>
               <button id="btn-clear-filters" class="px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition text-sm font-medium flex items-center gap-2">
@@ -212,35 +158,32 @@
             </div>
           </div>
 
-          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Applications">
+          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Grievances">
             <div class="px-6 py-4 border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-low">
-              <h2 class="text-xl font-bold text-on-surface">Applications</h2>
-              <span id="apps-count" class="text-sm font-medium text-secondary"></span>
+              <h2 class="text-xl font-bold text-on-surface">Cases</h2>
+              <span id="gr-count" class="text-sm font-medium text-secondary"></span>
             </div>
-            <div class="apps-table-wrap overflow-x-auto">
+            <div class="gr-table-wrap overflow-x-auto">
               <table class="w-full border-collapse text-left">
                 <thead>
                   <tr class="bg-surface-container-low border-b border-outline-variant/40 text-xs font-semibold text-secondary uppercase tracking-wider">
-                    <th class="px-6 py-4">Application ID</th>
-                    <th class="px-6 py-4">Citizen / Applicant</th>
-                    <th class="px-6 py-4">Service</th>
-                    <th class="px-6 py-4">ULPIN / Property</th>
-                    <th class="px-6 py-4">Submitted</th>
-                    <th class="px-6 py-4">Current Stage</th>
-                    <th class="px-6 py-4">Documents</th>
+                    <th class="px-6 py-4">Grievance ID</th>
+                    <th class="px-6 py-4">Citizen</th>
+                    <th class="px-6 py-4">Subject</th>
+                    <th class="px-6 py-4">Department</th>
+                    <th class="px-6 py-4">Date</th>
                     <th class="px-6 py-4">Priority</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4">Officer</th>
                     <th class="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody id="apps-tbody"></tbody>
+                <tbody id="gr-tbody"></tbody>
               </table>
             </div>
-            <div class="apps-cards px-4 py-4" id="apps-cards"></div>
+            <div class="gr-cards px-4 py-4" id="gr-cards"></div>
             <div id="empty-state" class="hidden py-16 px-6 text-center">
-              <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-fixed/30 flex items-center justify-center">
-                <span class="material-symbols-outlined text-3xl text-primary">assignment</span>
-              </div>
-              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No applications found</h3>
+              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No cases found</h3>
               <p class="text-secondary max-w-md mx-auto">Try a different search or clear the filters.</p>
             </div>
           </section>
@@ -248,6 +191,22 @@
         <div class="h-10"></div>
       </div>
     </main>
+  </div>
+
+  <div id="gr-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
+        <h3 id="gr-title" class="text-xl font-bold text-on-surface font-mono"></h3>
+        <button id="gr-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div id="gr-body" class="p-5 overflow-y-auto"></div>
+      <div class="p-5 border-t border-outline-variant/30 flex flex-wrap justify-end gap-2">
+        <button id="gr-close-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Close</button>
+        <button id="btn-gr-ack" class="px-4 py-2 rounded-md border border-outline-variant text-sm font-semibold">Acknowledge</button>
+        <button id="btn-gr-assign" class="px-4 py-2 rounded-md border border-primary text-primary text-sm font-semibold">Assign Officer</button>
+        <button id="btn-gr-resolve" class="px-4 py-2 rounded-md bg-green-600 text-white text-sm font-semibold hover:opacity-90 transition">Resolve</button>
+      </div>
+    </div>
   </div>
 
   <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
@@ -259,6 +218,6 @@
     ];
   </script>
   <script src="js/notifications.js?v=20260905"></script>
-  <script type="module" src="js/pending-applications.js?v=20260905"></script>
+  <script type="module" src="js/admin-grievances.js?v=20260905"></script>
 </body>
 </html>

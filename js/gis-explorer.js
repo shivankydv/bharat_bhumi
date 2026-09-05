@@ -1,4 +1,4 @@
-import { isAuthenticated, getCurrentUser, logout } from "./services/auth-service.js";
+import { isAuthenticated, getCurrentUser, logout, requireAuth } from "./services/auth-service.js";
 
 /* Demo parcel data (no GIS backend endpoint exists — do not invent API calls). */
 const DEMO_PARCELS = [
@@ -356,8 +356,8 @@ function setupSession() {
 }
 
 function init() {
-  if (!isAuthenticated()) {
-    window.location.href = "login.html";
+  // Shared by both portals (admin "Open in GIS" links here): auth only, no role routing.
+  if (!requireAuth()) {
     return;
   }
   setupSession();

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bharat Bhumi - Property 360° (Admin)</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="js/tailwind-config.js"></script>
+  <script src="js/tailwind-config.js?v=20260905"></script>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=20260905">
   <style>
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
@@ -72,7 +72,7 @@
           </div>
         </div>
       </div>
-      <nav class="flex-1 space-y-1">
+      <nav class="flex-1 space-y-1 overflow-y-auto">
         <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
         </a>
@@ -80,14 +80,38 @@
           <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
           <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
         </a>
+        <a href="admin-land-discovery.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">travel_explore</span><span>Land Discovery Requests</span>
+        </a>
+        <a href="admin-properties.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">home_work</span><span>Property Records</span>
+        </a>
+        <a href="admin-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">assignment</span><span>Applications</span>
+        </a>
+        <a href="admin-documents.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">fact_check</span><span>Document Verification</span>
+        </a>
+        <a href="admin-payments.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">payments</span><span>Payments</span>
+        </a>
+        <a href="admin-users.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">group</span><span>Users / Citizens</span>
+        </a>
         <a href="admin-property.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
           <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">360</span><span>Property 360°</span>
         </a>
-        <a href="admin-dashboard.html#queue" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">fact_check</span><span>Review Queue</span>
+        <a href="gis-explorer.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">map</span><span>GIS Explorer</span>
         </a>
-        <a href="admin-dashboard.html#departments" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
-          <span class="material-symbols-outlined">account_balance</span><span>Departments</span>
+        <a href="admin-reports.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">bar_chart</span><span>Reports</span>
+        </a>
+        <a href="admin-grievances.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">feedback</span><span>Grievances</span>
+        </a>
+        <a href="admin-settings.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">settings</span><span>Settings</span>
         </a>
         <a href="dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
           <span class="material-symbols-outlined">swap_horiz</span><span>Citizen Portal</span>
@@ -182,7 +206,14 @@
   </div>
 
   <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
-  <script src="js/notifications.js?v=2"></script>
-  <script type="module" src="js/admin-property.js"></script>
+  <script>
+    window.BB_NOTIF_ITEMS = [
+      { id: "adm-124", kind: "info", icon: "assignment", color: "#002F6C", title: "New Application", text: "New application APP-2026-00124 requires review.", time: "10 min ago", href: "application-review.html?id=APP-2026-00124" },
+      { id: "adm-125", kind: "success", icon: "upload_file", color: "#16A34A", title: "Documents Uploaded", text: "Documents uploaded for APP-2026-00125.", time: "1 hour ago", href: "application-review.html?id=APP-2026-00125" },
+      { id: "adm-126", kind: "warning", icon: "warning", color: "#EA580C", title: "Action Needed", text: "Application APP-2026-00126 requires additional documents.", time: "2 hours ago", href: "application-review.html?id=APP-2026-00126" }
+    ];
+  </script>
+  <script src="js/notifications.js?v=20260905"></script>
+  <script type="module" src="js/admin-property.js?v=20260905"></script>
 </body>
 </html>
