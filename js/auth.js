@@ -2,13 +2,20 @@
  * Authentication Page Logic (js/auth.js)
  * Manages UI tabs, validation, password visibility, and Spring Boot API integration.
  */
-import { login, isAuthenticated } from './services/auth-service.js';
+import { login, isAuthenticated, getCurrentUser } from './services/auth-service.js';
+
+// Single role router: ADMIN officers go to the Admin Portal, everyone else
+// goes to the citizen dashboard. Uses the actual backend role from session.
+function landingPageForSession() {
+  const role = String(getCurrentUser()?.role || "USER").toUpperCase();
+  return role === "ADMIN" ? "admin-dashboard.html" : "dashboard.html";
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  // If already authenticated, redirect to citizen dashboard
+  // If already authenticated, resume in the correct portal for the stored role
   if (isAuthenticated()) {
-    console.log('[Auth] User already authenticated. Redirecting to dashboard...');
-    window.location.href = 'dashboard.html';
+    console.log('[Auth] User already authenticated. Redirecting by role...');
+    window.location.href = landingPageForSession();
     return;
   }
 
@@ -129,9 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showAlert(`Login successful! Welcome back, <strong>${session.username}</strong> (${session.role}).`, 'success');
 
-        // Redirect to citizen dashboard after brief pause
+        // saveSession (inside login) overwrites any stale session; route by the
+        // fresh backend role after a brief pause
+        const target = String(session.role || "USER").toUpperCase() === "ADMIN"
+          ? "admin-dashboard.html"
+          : "dashboard.html";
         setTimeout(() => {
-          window.location.href = 'dashboard.html';
+          window.location.href = target;
         }, 800);
 
       } catch (error) {

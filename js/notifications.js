@@ -10,7 +10,9 @@
 (function () {
   var STORE_KEY = "bb_notifications_read";
 
-  var ITEMS = [
+  // Pages may define window.BB_NOTIF_ITEMS before this script loads to show
+  // their own demo items (e.g. admin pending-application alerts).
+  var ITEMS = window.BB_NOTIF_ITEMS || [
     {
       id: "n-app",
       kind: "info",

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Bhumi - Property 360° (Admin)</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
+    body { min-height: 100vh; background: #faf9ff; color: #1a1b20; font-family: "Hanken Grotesk", sans-serif; overflow-x: hidden; overflow-y: auto; }
+    .page-container { width: 100%; max-width: none; margin: 0; }
+    .dashboard-main { margin-left: 256px; width: calc(100% - 256px); }
+    .status-verified { background: rgba(22,163,74,.10); color: #16A34A; }
+    .status-pending { background: rgba(234,88,12,.10); color: #EA580C; }
+    .status-rejected { background: rgba(186,26,26,.10); color: #BA1A1A; }
+    .status-neutral { background: rgba(92,95,97,.12); color: #434750; }
+    .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+    .modal-overlay { background: rgba(0,0,0,.4); backdrop-filter: blur(4px); }
+    .field-error { color: #BA1A1A; font-size: 13px; margin-top: 4px; }
+    .prop-tab.active { background: #001b44; color: #ffffff; }
+    @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
+    @media (max-width: 768px) {
+      .dashboard-main { margin-left: 0; width: 100%; }
+      .dashboard-content { padding: 16px; }
+    }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-outline-variant/40" style="box-shadow: 0px 2px 4px rgba(0,47,108,.05);">
+    <div class="h-full w-full flex items-center px-6 gap-6">
+      <a href="admin-dashboard.html" class="flex items-center gap-3 flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi Logo" class="w-9 h-9 rounded-full bg-white p-1 object-contain border border-outline-variant/30">
+        <span class="text-xl font-bold tracking-tight text-primary hidden md:block">Bharat Bhumi <span class="text-sm font-semibold text-secondary">· Admin Portal</span></span>
+      </a>
+      <span class="hidden lg:block whitespace-nowrap text-secondary text-label-md font-label-md ml-auto">Demo data — not real government records</span>
+      <button id="btn-notifications" class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition text-on-surface-variant" title="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-400"></span>
+      </button>
+      <div class="flex items-center gap-2 ml-auto lg:ml-0">
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="material-symbols-outlined text-on-surface-variant">badge</span>
+          <span id="top-nav-username" class="font-semibold text-on-surface">Officer</span>
+          <span id="top-nav-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary">ADMIN</span>
+        </div>
+        <button id="btn-topnav-logout" class="flex items-center gap-2 px-4 py-2 rounded-md border border-outline-variant hover:bg-surface-container-high transition text-label-md font-label-md text-on-surface" title="Sign out">
+          <span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex min-h-screen pt-16 page-container">
+    <aside class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-outline-variant z-40 p-4">
+      <div class="px-2 mb-7">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined">supervisor_account</span>
+          </div>
+          <div class="min-w-0">
+            <h2 class="font-bold text-lg text-primary truncate">Admin Portal</h2>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-[#16a34a]">verified_user</span>
+              <span id="sidebar-user-role" class="text-sm text-secondary truncate">ADMIN • Verified Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+        </a>
+        <a href="pending-applications.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">pending_actions</span><span>Pending Applications</span>
+          <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
+        </a>
+        <a href="admin-property.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">360</span><span>Property 360°</span>
+        </a>
+        <a href="admin-dashboard.html#queue" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">fact_check</span><span>Review Queue</span>
+        </a>
+        <a href="admin-dashboard.html#departments" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">account_balance</span><span>Departments</span>
+        </a>
+        <a href="dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">swap_horiz</span><span>Citizen Portal</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-outline-variant space-y-2">
+        <button id="btn-sidebar-logout" class="w-full flex items-center gap-3 text-on-surface-variant hover:bg-red-50 hover:text-red-600 rounded-lg px-4 py-3 transition text-left">
+          <span class="material-symbols-outlined">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main flex-1 overflow-y-auto">
+      <div class="dashboard-content">
+        <div class="w-full max-w-[1280px] mx-auto flex flex-col gap-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="text-label-sm font-semibold text-on-surface-variant">Admin Portal</span>
+                <span class="material-symbols-outlined text-[14px] text-secondary">chevron_right</span>
+                <span class="text-primary font-bold text-label-sm">Property 360°</span>
+                <span class="status-badge status-pending ml-1">DEMO DATA</span>
+              </div>
+              <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Property 360° — Unified View</h1>
+              <p class="text-body-md text-secondary mt-1">One property → every department → one decision.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="prop-select" class="text-label-sm font-semibold text-on-surface-variant whitespace-nowrap">PROPERTY / ULPIN</label>
+              <select id="prop-select" class="px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base font-mono cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"></select>
+              <span id="prop-status"></span>
+            </div>
+          </div>
+
+          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Case workflow">
+            <h2 class="text-lg font-bold text-on-surface mb-3">Case Workflow</h2>
+            <div id="prop-workflow" class="flex flex-wrap items-center gap-2"></div>
+          </section>
+
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+            <section class="xl:col-span-8 bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Department details">
+              <div id="prop-tabs" class="flex gap-1 p-3 border-b border-outline-variant/40 overflow-x-auto bg-surface-container-low"></div>
+              <div id="prop-panel" class="p-5 md:p-6"></div>
+            </section>
+
+            <div class="xl:col-span-4 flex flex-col gap-6">
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Officer actions">
+                <h2 class="text-lg font-bold text-on-surface mb-1">Officer Actions</h2>
+                <p class="text-xs text-secondary mb-3">Reason required for Reject, Changes, Documents, Escalate &amp; Resolve.</p>
+                <div id="officer-actions" class="grid grid-cols-2 gap-2"></div>
+              </section>
+              <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5" aria-label="Activity history">
+                <h2 class="text-lg font-bold text-on-surface mb-3">Activity History</h2>
+                <div id="activity-list" class="flex flex-col"></div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div class="h-10"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="action-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-overlay" role="dialog" aria-modal="true">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between p-5 border-b border-outline-variant/30">
+        <h3 id="action-title" class="text-xl font-bold text-on-surface">Officer Action</h3>
+        <button id="action-close" class="p-2 rounded-lg hover:bg-surface-container-high transition" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="p-5 flex flex-col gap-4 overflow-y-auto">
+        <p id="action-desc" class="text-sm text-secondary"></p>
+        <div id="action-officer-wrap" class="hidden">
+          <label for="action-officer" class="block text-label-sm font-semibold text-on-surface-variant mb-1">ASSIGN TO OFFICER *</label>
+          <select id="action-officer" class="w-full px-4 py-2.5 bg-white border border-outline-variant rounded-lg text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+            <option>Revenue Officer — District A</option>
+            <option>Registration Officer — District A</option>
+            <option>Municipal Officer — ULB Central</option>
+            <option>Survey Officer — Field Team 2</option>
+            <option>Planning Officer — Development Authority</option>
+          </select>
+        </div>
+        <div id="action-input-wrap">
+          <label id="action-input-label" for="action-input" class="block text-label-sm font-semibold text-on-surface-variant mb-1">REASON / COMMENT *</label>
+          <textarea id="action-input" rows="3" class="w-full px-4 py-2.5 border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+        <p id="action-error" class="field-error hidden"></p>
+      </div>
+      <div class="p-5 border-t border-outline-variant/30 flex justify-end gap-3">
+        <button id="action-cancel-btn" class="px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-md transition text-sm font-medium">Cancel</button>
+        <button id="btn-action-confirm" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary-container transition">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+  <script src="js/notifications.js?v=2"></script>
+  <script type="module" src="js/admin-property.js"></script>
+</body>
+</html>

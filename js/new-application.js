@@ -240,7 +240,14 @@ function submitApplication() {
     state.submitted = { id: appId, date: today, service: svc.name, ulpin: state.property.ulpin, status: "Submitted" };
     try {
       const prev = JSON.parse(localStorage.getItem("bb_applications") || "[]");
-      prev.unshift({ ...state.submitted, fee: svc.fee });
+      prev.unshift({
+        ...state.submitted,
+        fee: svc.fee,
+        iso: new Date().toISOString().slice(0, 10),
+        username: (getCurrentUser() || {}).username || "",
+        applicant: { ...state.applicant },
+        docs: svc.docs.map((name) => ({ name, file: state.docs[name] || null }))
+      });
       localStorage.setItem("bb_applications", JSON.stringify(prev));
     } catch (e) {
       console.warn("[New Application] Failed to persist submission:", e);

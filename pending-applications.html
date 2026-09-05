@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Bhumi - Pending Applications (Admin)</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; }
+    body { min-height: 100vh; background: #faf9ff; color: #1a1b20; font-family: "Hanken Grotesk", sans-serif; overflow-x: hidden; overflow-y: auto; }
+    .page-container { width: 100%; max-width: none; margin: 0; }
+    .dashboard-main { margin-left: 256px; width: calc(100% - 256px); }
+    .status-verified { background: rgba(22,163,74,.10); color: #16A34A; }
+    .status-pending { background: rgba(234,88,12,.10); color: #EA580C; }
+    .status-rejected { background: rgba(186,26,26,.10); color: #BA1A1A; }
+    .status-neutral { background: rgba(92,95,97,.12); color: #434750; }
+    .status-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+    @media (min-width: 769px) { .dashboard-content { padding: 24px; } }
+    @media (max-width: 768px) {
+      .dashboard-main { margin-left: 0; width: 100%; }
+      .dashboard-content { padding: 16px; }
+      .apps-table-wrap { display: none; }
+      .apps-cards { display: flex; flex-direction: column; gap: 12px; }
+    }
+    @media (min-width: 769px) { .apps-cards { display: none; } }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #002F6C; outline-offset: 2px; }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+  <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-outline-variant/40" style="box-shadow: 0px 2px 4px rgba(0,47,108,.05);">
+    <div class="h-full w-full flex items-center px-6 gap-6">
+      <a href="admin-dashboard.html" class="flex items-center gap-3 flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ4bJ14MGOmbMXTWcK4gSCAGC0TtWOMdm7AnsGy0-TvFiVtw6rOEOkjm4wuWpJwwgYM2-42D66w9oO6QlTbq61GZU_kBKfhEDA5TBhRO0GwhBQiKtSOTnVmOnTzB1AzHBBaFD4cwetU3jwuJpOiSowkhK5GQPM-BtmY_0x91UDb1k14mP41spDpgAScFuMI3b0a9dqHlFPmd1KSnwsqB6wMuCQ3eQQX3DqXaaWRkgGi0qxFkwxxP1iuuC7AkOV4wDEkzI" alt="Bharat Bhumi Logo" class="w-9 h-9 rounded-full bg-white p-1 object-contain border border-outline-variant/30">
+        <span class="text-xl font-bold tracking-tight text-primary hidden md:block">Bharat Bhumi <span class="text-sm font-semibold text-secondary">· Admin Portal</span></span>
+      </a>
+      <span class="hidden lg:block whitespace-nowrap text-secondary text-label-md font-label-md ml-auto">Demo data — not real government records</span>
+      <button id="btn-notifications" class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition text-on-surface-variant" title="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-400"></span>
+      </button>
+      <div class="flex items-center gap-2 ml-auto lg:ml-0">
+        <div class="hidden sm:flex items-center gap-2">
+          <span class="material-symbols-outlined text-on-surface-variant">badge</span>
+          <span id="top-nav-username" class="font-semibold text-on-surface">Officer</span>
+          <span id="top-nav-role-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary">ADMIN</span>
+        </div>
+        <button id="btn-topnav-logout" class="flex items-center gap-2 px-4 py-2 rounded-md border border-outline-variant hover:bg-surface-container-high transition text-label-md font-label-md text-on-surface" title="Sign out">
+          <span class="material-symbols-outlined text-[18px]">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex min-h-screen pt-16 page-container">
+    <aside class="hidden md:flex flex-col fixed left-0 top-16 bottom-0 w-64 bg-white border-r border-outline-variant z-40 p-4">
+      <div class="px-2 mb-7">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined">supervisor_account</span>
+          </div>
+          <div class="min-w-0">
+            <h2 class="font-bold text-lg text-primary truncate">Admin Portal</h2>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-[#16a34a]">verified_user</span>
+              <span id="sidebar-user-role" class="text-sm text-secondary truncate">ADMIN • Verified Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a href="admin-dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
+        </a>
+        <a href="pending-applications.html" class="flex items-center gap-3 sidebar-active rounded-lg px-4 py-3 font-semibold">
+          <span class="material-symbols-outlined fill" style="font-variation-settings:'FILL' 1;">pending_actions</span><span>Pending Applications</span>
+          <span id="pending-count-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-primary text-white"></span>
+        </a>
+        <a href="admin-property.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">360</span><span>Property 360°</span>
+        </a>
+        <a href="admin-dashboard.html#queue" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">fact_check</span><span>Review Queue</span>
+        </a>
+        <a href="admin-dashboard.html#departments" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">account_balance</span><span>Departments</span>
+        </a>
+        <a href="dashboard.html" class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 transition">
+          <span class="material-symbols-outlined">swap_horiz</span><span>Citizen Portal</span>
+        </a>
+      </nav>
+      <div class="pt-4 border-t border-outline-variant space-y-2">
+        <button id="btn-sidebar-logout" class="w-full flex items-center gap-3 text-on-surface-variant hover:bg-red-50 hover:text-red-600 rounded-lg px-4 py-3 transition text-left">
+          <span class="material-symbols-outlined">logout</span><span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main flex-1 overflow-y-auto">
+      <div class="dashboard-content">
+        <div class="w-full max-w-[1280px] mx-auto flex flex-col gap-6">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="text-label-sm font-semibold text-on-surface-variant">Admin Portal</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary">chevron_right</span>
+              <span class="text-primary font-bold text-label-sm">Pending Applications</span>
+              <span class="status-badge status-pending ml-1">DEMO DATA</span>
+            </div>
+            <h1 class="text-display-lg-mobile md:text-display-lg font-bold text-primary">Pending Applications</h1>
+            <p class="text-body-md text-secondary mt-1">Review, verify and process citizen applications submitted for land and property services.</p>
+          </div>
+
+          <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
+              <p class="text-label-sm font-semibold text-on-surface-variant">Pending Review</p>
+              <p id="sum-pending" class="text-3xl font-bold text-primary mt-1">0</p>
+            </div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
+              <p class="text-label-sm font-semibold text-on-surface-variant">Documents Awaiting Verification</p>
+              <p id="sum-docs" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
+            </div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
+              <p class="text-label-sm font-semibold text-on-surface-variant">Requires Additional Information</p>
+              <p id="sum-info" class="text-3xl font-bold text-[#EA580C] mt-1">0</p>
+            </div>
+            <div class="bg-white rounded-xl border border-outline-variant/40 shadow-sm p-5">
+              <p class="text-label-sm font-semibold text-on-surface-variant">Recently Submitted</p>
+              <p id="sum-recent" class="text-3xl font-bold text-[#16A34A] mt-1">0</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg border border-outline-variant/40 shadow-sm p-4">
+            <div class="flex flex-col xl:flex-row gap-3 xl:items-center">
+              <div class="flex-1 relative min-w-[200px]">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="font-size:20px;">search</span>
+                <input type="text" id="app-search" placeholder="Search by ID, citizen, ULPIN, service..."
+                  class="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="f-status" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Status:</label>
+                <select id="f-status" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                  <option>Pending Review</option>
+                  <option>Under Verification</option>
+                  <option>Document Verification</option>
+                  <option>Documents Required</option>
+                  <option>Correction Required</option>
+                  <option>Submitted</option>
+                  <option>Approved</option>
+                  <option>Rejected</option>
+                  <option>Resolved</option>
+                  <option>Open</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="f-service" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Service:</label>
+                <select id="f-service" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All Services</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="f-priority" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Priority:</label>
+                <select id="f-priority" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                  <option>Normal</option>
+                  <option>High</option>
+                  <option>Urgent</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="f-date" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Date:</label>
+                <input type="date" id="f-date" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              </div>
+              <div class="flex items-center gap-2">
+                <label for="f-dept" class="text-label-sm font-medium text-on-surface-variant whitespace-nowrap">Dept:</label>
+                <select id="f-dept" class="px-3 py-2 bg-white border border-outline-variant rounded-lg text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All</option>
+                </select>
+              </div>
+              <button id="btn-clear-filters" class="px-3 py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition text-sm font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>Clear Filters
+              </button>
+            </div>
+          </div>
+
+          <section class="bg-white rounded-xl border border-outline-variant/40 shadow-sm overflow-hidden" aria-label="Applications">
+            <div class="px-6 py-4 border-b border-outline-variant/40 flex items-center justify-between bg-surface-container-low">
+              <h2 class="text-xl font-bold text-on-surface">Applications</h2>
+              <span id="apps-count" class="text-sm font-medium text-secondary"></span>
+            </div>
+            <div class="apps-table-wrap overflow-x-auto">
+              <table class="w-full border-collapse text-left">
+                <thead>
+                  <tr class="bg-surface-container-low border-b border-outline-variant/40 text-xs font-semibold text-secondary uppercase tracking-wider">
+                    <th class="px-6 py-4">Application ID</th>
+                    <th class="px-6 py-4">Citizen / Applicant</th>
+                    <th class="px-6 py-4">Service</th>
+                    <th class="px-6 py-4">ULPIN / Property</th>
+                    <th class="px-6 py-4">Submitted</th>
+                    <th class="px-6 py-4">Current Stage</th>
+                    <th class="px-6 py-4">Documents</th>
+                    <th class="px-6 py-4">Priority</th>
+                    <th class="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="apps-tbody"></tbody>
+              </table>
+            </div>
+            <div class="apps-cards px-4 py-4" id="apps-cards"></div>
+            <div id="empty-state" class="hidden py-16 px-6 text-center">
+              <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-fixed/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-3xl text-primary">assignment</span>
+              </div>
+              <h3 class="text-headline-md font-semibold text-on-surface mb-2">No applications found</h3>
+              <p class="text-secondary max-w-md mx-auto">Try a different search or clear the filters.</p>
+            </div>
+          </section>
+        </div>
+        <div class="h-10"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="admin-toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-primary text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg whitespace-nowrap"></div>
+  <script>
+    window.BB_NOTIF_ITEMS = [
+      { id: "adm-124", kind: "info", icon: "assignment", color: "#002F6C", title: "New Application", text: "New application APP-2026-00124 requires review.", time: "10 min ago", href: "application-review.html?id=APP-2026-00124" },
+      { id: "adm-125", kind: "success", icon: "upload_file", color: "#16A34A", title: "Documents Uploaded", text: "Documents uploaded for APP-2026-00125.", time: "1 hour ago", href: "application-review.html?id=APP-2026-00125" },
+      { id: "adm-126", kind: "warning", icon: "warning", color: "#EA580C", title: "Action Needed", text: "Application APP-2026-00126 requires additional documents.", time: "2 hours ago", href: "application-review.html?id=APP-2026-00126" }
+    ];
+  </script>
+  <script src="js/notifications.js?v=2"></script>
+  <script type="module" src="js/pending-applications.js"></script>
+</body>
+</html>
